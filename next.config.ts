@@ -16,6 +16,16 @@ const withPWA = require("next-pwa")({
 
   // Runtime caching rules (Workbox) — adjust TTLs / maxEntries as needed
   runtimeCaching: [
+    // Cache app shell (pages) for offline access
+    {
+      urlPattern: /^\/$/,
+      handler: "NetworkFirst",
+      options: {
+        cacheName: "pages-cache",
+        expiration: { maxEntries: 10, maxAgeSeconds: 24 * 60 * 60 },
+        networkTimeoutSeconds: 3,
+      },
+    },
     // Cache Next.js data and page navigations (network first, fallback to cache)
     {
       urlPattern: /^\/(?:_next\/data\/.*|.*\.json)$/, // data routes and JSON
