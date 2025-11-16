@@ -11,8 +11,6 @@ const withPWA = require("next-pwa")({
   dest: "public",
   register: true,
   skipWaiting: true,
-  // Disable PWA completely for now
-  disable: true,
 
   // Runtime caching rules (Workbox) — adjust TTLs / maxEntries as needed
   runtimeCaching: [
