@@ -11,19 +11,27 @@ const withPWA = require("next-pwa")({
   dest: "public",
   register: true,
   skipWaiting: true,
-  // disable during development to avoid Turbopack vs webpack conflict
-  disable: process.env.NODE_ENV === "development",
+  // Disable PWA completely for now
+  disable: true,
 
   // Runtime caching rules (Workbox) — adjust TTLs / maxEntries as needed
   runtimeCaching: [
-    // Cache app shell (pages) for offline access
+    // Cache app shell but allow network updates
     {
       urlPattern: /^\/$/,
-      handler: "NetworkFirst",
+      handler: "StaleWhileRevalidate", // Changed from NetworkFirst
       options: {
         cacheName: "pages-cache",
         expiration: { maxEntries: 10, maxAgeSeconds: 24 * 60 * 60 },
-        networkTimeoutSeconds: 3,
+      },
+    },
+    // Cache JavaScript with network priority
+    {
+      urlPattern: /\/_next\/static\/.*\.js$/,
+      handler: "StaleWhileRevalidate",
+      options: {
+        cacheName: "js-cache",
+        expiration: { maxEntries: 100, maxAgeSeconds: 24 * 60 * 60 },
       },
     },
     // Cache Next.js data and page navigations (network first, fallback to cache)
