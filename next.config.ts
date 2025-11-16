@@ -9,6 +9,7 @@ const withPWA = require("next-pwa")({
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   experimental: {
+    // @ts-ignore
     turbo: false, // ← DISABLE turbopack
   },
 };
