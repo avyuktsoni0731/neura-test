@@ -2,7 +2,7 @@
 import { useNativeWS } from "../hooks/useNativeWS";
 
 export default function ESPControl() {
-  const url = process.env.NEXT_PUBLIC_WS_URL || "wss://192.168.4.1:81/";
+  const url = process.env.NEXT_PUBLIC_WS_URL || "ws://192.168.4.1:81/";
   const { readyState, lastMessage, send } = useNativeWS(url);
 
   // Add debug logging
