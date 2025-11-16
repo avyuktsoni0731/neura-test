@@ -5,6 +5,11 @@ export default function ESPControl() {
   const url = process.env.NEXT_PUBLIC_WS_URL || "ws://192.168.4.1:81/";
   const { readyState, lastMessage, send } = useNativeWS(url);
 
+  // Add debug logging
+  console.log("🔌 WebSocket URL:", url);
+  console.log("🔄 WebSocket State:", readyState);
+  console.log("📨 Last Message:", lastMessage);
+
   const label = (s: number) =>
     s === WebSocket.CONNECTING
       ? "CONNECTING"
@@ -17,6 +22,8 @@ export default function ESPControl() {
   return (
     <div className="p-4">
       <h3>ESP32 LED</h3>
+      <div>Debug URL: {url}</div>
+      <div>Debug State: {readyState}</div>
       <div className="flex gap-2 my-2">
         <button onClick={() => send("on")} className="cursor-pointer">
           ON
