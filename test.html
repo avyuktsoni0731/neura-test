@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arduino WebSocket Test</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #1e1e1e;
+        color: #fff;
+      }
+      h1 {
+        text-align: center;
+        color: #4caf50;
+      }
+      .status {
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 5px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 18px;
+      }
+      .connected {
+        background: #4caf50;
+      }
+      .disconnected {
+        background: #f44336;
+      }
+      .connecting {
+        background: #ff9800;
+      }
+      .data-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+      .data-box {
+        background: #2d2d2d;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        border: 2px solid #444;
+      }
+      .data-label {
+        font-size: 14px;
+        color: #aaa;
+        margin-bottom: 10px;
+      }
+      .data-value {
+        font-size: 32px;
+        font-weight: bold;
+        color: #4caf50;
+      }
+      .log {
+        background: #2d2d2d;
+        padding: 15px;
+        border-radius: 5px;
+        max-height: 200px;
+        overflow-y: auto;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+      }
+      .log-entry {
+        margin: 5px 0;
+        color: #bbb;
+      }
+      button {
+        background: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 10px 5px;
+      }
+      button:hover {
+        background: #45a049;
+      }
+      button.disconnect {
+        background: #f44336;
+      }
+      button.disconnect:hover {
+        background: #da190b;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Arduino WebSocket Test</h1>
+
+    <div id="status" class="status connecting">Connecting...</div>
+
+    <div style="text-align: center">
+      <button onclick="connect()">Connect</button>
+      <button class="disconnect" onclick="disconnect()">Disconnect</button>
+    </div>
+
+    <div class="data-grid">
+      <div class="data-box">
+        <div class="data-label">Pitch</div>
+        <div class="data-value" id="pitch">--</div>
+      </div>
+      <div class="data-box">
+        <div class="data-label">Roll</div>
+        <div class="data-value" id="roll">--</div>
+      </div>
+      <div class="data-box">
+        <div class="data-label">Yaw</div>
+        <div class="data-value" id="yaw">--</div>
+      </div>
+      <div class="data-box">
+        <div class="data-label">BPM (Avg)</div>
+        <div class="data-value" id="bpm">--</div>
+      </div>
+      <div class="data-box">
+        <div class="data-label">Raw BPM</div>
+        <div class="data-value" id="rawBPM">--</div>
+      </div>
+    </div>
+
+    <h3>Message Log:</h3>
+    <div class="log" id="log"></div>
+
+    <script>
+      let ws = null;
+      const statusDiv = document.getElementById('status');
+      const logDiv = document.getElementById('log');
+
+      function addLog(message) {
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+        logDiv.insertBefore(entry, logDiv.firstChild);
+      }
+
+      function connect() {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          addLog('Already connected');
+          return;
+        }
+
+        statusDiv.textContent = 'Connecting...';
+        statusDiv.className = 'status connecting';
+        addLog('Attempting to connect to ws://192.168.4.1:81');
+
+        ws = new WebSocket('ws://192.168.4.1:81');
+
+        ws.onopen = () => {
+          statusDiv.textContent = 'Connected';
+          statusDiv.className = 'status connected';
+          addLog('WebSocket connected successfully');
+        };
+
+        ws.onmessage = event => {
+          try {
+            const data = JSON.parse(event.data);
+            document.getElementById('pitch').textContent =
+              data.pitch.toFixed(1);
+            document.getElementById('roll').textContent = data.roll.toFixed(1);
+            document.getElementById('yaw').textContent = data.yaw.toFixed(1);
+            document.getElementById('bpm').textContent = data.bpm;
+            document.getElementById('rawBPM').textContent = data.rawBPM;
+            addLog(`Received: ${event.data}`);
+          } catch (e) {
+            addLog(`Error parsing data: ${e.message}`);
+          }
+        };
+
+        ws.onerror = error => {
+          statusDiv.textContent = 'Error';
+          statusDiv.className = 'status disconnected';
+          addLog('WebSocket error occurred');
+          console.error('WebSocket error:', error);
+        };
+
+        ws.onclose = () => {
+          statusDiv.textContent = 'Disconnected';
+          statusDiv.className = 'status disconnected';
+          addLog('WebSocket connection closed');
+        };
+      }
+
+      function disconnect() {
+        if (ws) {
+          ws.close();
+          addLog('Disconnecting...');
+        }
+      }
+
+      // Auto-connect on page load
+      connect();
+    </script>
+  </body>
+</html>
