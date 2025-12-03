@@ -3,6 +3,6 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "App.js", "src/screens/home.js"],
   "exclude": ["**/node_modules", "**/Pods"]
 }
