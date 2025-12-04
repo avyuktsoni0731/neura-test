@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Switch } from "react-native";
 
 export default function SettingsScreen(){
     const[notifications, setNotifications] = React.useState(true);
+    const[darkMode, setDarkMode] = React.useState(false);
 
     return(
         <View style={styles.container}>
@@ -18,8 +19,9 @@ export default function SettingsScreen(){
         <View style={styles.row}>
         <Text style={styles.label}>Dark Mode</Text>
         <Switch
-            value={false}
+            value={darkMode}
             thumbColor={"#ccc"}
+            onValueChange={setDarkMode}
         />
         </View>
         </View>

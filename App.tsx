@@ -62,10 +62,19 @@ export default function App() {
     </NavigationContainer>
   );
 }*/
-
+/*
 import React from 'react';
 import AppNavigator from './src/navigataion/appNavigator.js';
 
 export default function App(){
   return <AppNavigator />;
-}
+}*/
+
+import React from 'react';
+import AppNavigator from './src/navigataion/appNavigator.tsx';
+
+const App: React.FC = () => {
+  return <AppNavigator />;
+};
+
+export default App;
