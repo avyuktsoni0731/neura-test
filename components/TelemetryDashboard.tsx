@@ -5,6 +5,7 @@ import {
   useColorScheme,
   ActivityIndicator,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import { useWebSocket } from '../hooks/useWebSocket';
 
@@ -18,9 +19,15 @@ interface TelemetryData {
   timestamp?: number;
 }
 
+interface TelemetryDashboardProps {
+  onBack?: () => void;
+}
+
 const WS_URL = 'ws://192.168.4.1:81/';
 
-export default function TelemetryDashboard() {
+export default function TelemetryDashboard({
+  onBack,
+}: TelemetryDashboardProps) {
   const isDarkMode = useColorScheme() === 'dark';
   const { readyState, lastMessage } = useWebSocket(WS_URL);
   const [telemetry, setTelemetry] = useState<TelemetryData | null>(null);
@@ -67,6 +74,25 @@ export default function TelemetryDashboard() {
       className={`flex-1 ${isDarkMode ? 'bg-black' : 'bg-gray-50'}`}
       contentContainerStyle={{ padding: 20 }}
     >
+      {/* Back Button */}
+      {onBack && (
+        <TouchableOpacity
+          onPress={onBack}
+          className="flex-row items-center justify-center mb-4"
+        >
+          <View className="flex-row items-baseline rounded-xl justify-center bg-blue-600/10 px-4 py-2">
+            <Text className="text-xl mr-2">←</Text>
+            <Text
+              className={`text-lg ${
+                isDarkMode ? 'text-gray-50' : 'text-zinc-900'
+              }`}
+            >
+              Back
+            </Text>
+          </View>
+        </TouchableOpacity>
+      )}
+
       {/* Header */}
       <View className="items-center mb-6">
         <Text
