@@ -5,16 +5,31 @@
  * @format
  */
 
-/*
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import './app.css';
+import { StatusBar, useColorScheme, View } from 'react-native';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import React, { useEffect, useState } from 'react';
 import TelemetryDashboard from './components/TelemetryDashboard';
+import SplashScreen from './components/SplashScreen';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <SplashScreen />;
+  }
 
   return (
     <SafeAreaProvider>
@@ -28,7 +43,7 @@ function AppContent() {
   const safeAreaInsets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { paddingTop: safeAreaInsets.top }]}>
+    <View className="flex-1" style={{ paddingTop: safeAreaInsets.top }}>
       <TelemetryDashboard />
     </View>
   );
