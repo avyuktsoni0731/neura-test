@@ -9,15 +9,20 @@ export function useWebSocket(url: string) {
   const [lastMessage, setLastMessage] = useState<string | null>(null);
 
   const connect = () => {
+    // Close existing connection if any
+    if (wsRef.current) {
+      wsRef.current.close();
+    }
+
     try {
+      console.log('🔄 Attempting to connect to:', url);
       const ws = new WebSocket(url);
       wsRef.current = ws;
 
       ws.onopen = () => {
-        console.log('WebSocket connected');
+        console.log('✅ WebSocket connected successfully');
         setReadyState(WebSocket.OPEN);
 
-        // Clear reconnect timeout if it exists
         if (reconnectTimeoutRef.current) {
           clearTimeout(reconnectTimeoutRef.current);
           reconnectTimeoutRef.current = null;
@@ -25,32 +30,32 @@ export function useWebSocket(url: string) {
       };
 
       ws.onmessage = event => {
-        console.log('Received message:', event.data);
         setLastMessage(event.data);
       };
 
       ws.onerror = error => {
-        console.error('WebSocket error:', error);
+        console.error('❌ WebSocket error:', error);
       };
 
       ws.onclose = () => {
-        console.log('WebSocket disconnected');
+        console.log('🔌 WebSocket disconnected');
         setReadyState(WebSocket.CLOSED);
-
-        // Attempt to reconnect after 5 seconds
-        if (!reconnectTimeoutRef.current) {
-          reconnectTimeoutRef.current = setTimeout(() => {
-            console.log('Attempting to reconnect...');
-            connect();
-          }, 5000);
-        }
       };
 
       setReadyState(WebSocket.CONNECTING);
     } catch (error) {
-      console.error('Failed to create WebSocket:', error);
+      console.error('❌ Failed to create WebSocket:', error);
       setReadyState(WebSocket.CLOSED);
     }
+  };
+
+  const reconnect = () => {
+    console.log('🔄 Manual reconnect triggered');
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
+    }
+    connect();
   };
 
   useEffect(() => {
@@ -76,5 +81,6 @@ export function useWebSocket(url: string) {
     readyState,
     lastMessage,
     send,
+    reconnect,
   };
 }
