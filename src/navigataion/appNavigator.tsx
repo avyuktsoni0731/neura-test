@@ -7,12 +7,14 @@ import { useAppStore } from '../store/appstore.js';
 import LoginScreen from '../screens/loginScreen.tsx'; // Update to .tsx
 import BottomTabs from './navbar.tsx';
 import AddPatientScreen from '../screens/addPatient.tsx';
+import PosturalTremorScreen from '../screens/PosturalTremor.tsx';
 
 type RootStackParamList = {
   Login: undefined;
   MainTabs: undefined;
   AddPatient: { onPatientAdded?: () => void };
   Screening: { patient: any };
+  PosturalTremor: { patient: any };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -36,6 +38,10 @@ export default function AppNavigator() {
           <>
             <Stack.Screen name="MainTabs" component={BottomTabs} />
             <Stack.Screen name="AddPatient" component={AddPatientScreen} />
+            <Stack.Screen
+              name="PosturalTremor"
+              component={PosturalTremorScreen}
+            />
           </>
         ) : (
           <Stack.Screen name="Login" component={LoginScreen} />
