@@ -10,13 +10,12 @@ import {
 import { useWebSocket } from '../hooks/useWebSocket';
 
 interface TelemetryData {
-  pitch: number;
-  roll: number;
-  yaw: number;
   bpm: number;
   rawBPM: number;
   status?: string;
   timestamp?: number;
+  hz: number;
+  amp_ms2: number;
 }
 
 interface TelemetryDashboardProps {
@@ -170,24 +169,17 @@ export default function TelemetryDashboard({
 
             <View className="gap-3">
               <DataRow
-                label="Pitch"
-                value={telemetry.pitch?.toFixed(2)}
-                unit="°"
+                label="Frequency"
+                value={telemetry.hz?.toFixed(2)}
+                unit="hz"
                 color="#2563EB"
                 isDarkMode={isDarkMode}
               />
               <DataRow
-                label="Roll"
-                value={telemetry.roll?.toFixed(2)}
+                label="Amplitude"
+                value={telemetry.amp_ms2?.toFixed(2)}
                 unit="°"
                 color="#9333EA"
-                isDarkMode={isDarkMode}
-              />
-              <DataRow
-                label="Yaw"
-                value={telemetry.yaw?.toFixed(2)}
-                unit="°"
-                color="#4F46E5"
                 isDarkMode={isDarkMode}
               />
             </View>
