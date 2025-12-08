@@ -81,6 +81,55 @@ export const useAppStore = create((set, get) => ({
     }
   },
 
+  // Patient management
+  patients: [],
+
+  // Load patients for current practitioner
+  loadPatients: async () => {
+    const { practitioner } = get();
+    try {
+      const savedPatients = await AsyncStorage.getItem(
+        `patients_${practitioner.mobile}`,
+      );
+      if (savedPatients) {
+        const patients = JSON.parse(savedPatients);
+        set({ patients });
+      }
+    } catch (error) {
+      console.error('Failed to load patients:', error);
+    }
+  },
+
+  // Save new patient
+  savePatient: async patient => {
+    const { practitioner, patients } = get();
+    try {
+      const updatedPatients = [...patients, patient];
+      await AsyncStorage.setItem(
+        `patients_${practitioner.mobile}`,
+        JSON.stringify(updatedPatients),
+      );
+      set({ patients: updatedPatients });
+    } catch (error) {
+      console.error('Failed to save patient:', error);
+    }
+  },
+
+  // Delete patient
+  deletePatient: async patientId => {
+    const { practitioner, patients } = get();
+    try {
+      const updatedPatients = patients.filter(p => p.id !== patientId);
+      await AsyncStorage.setItem(
+        `patients_${practitioner.mobile}`,
+        JSON.stringify(updatedPatients),
+      );
+      set({ patients: updatedPatients });
+    } catch (error) {
+      console.error('Failed to delete patient:', error);
+    }
+  },
+
   // Existing methods...
   setPractitionerField: (field, value) =>
     set(state => ({

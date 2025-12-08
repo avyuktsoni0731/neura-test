@@ -6,10 +6,13 @@ import { useAppStore } from '../store/appstore.js';
 
 import LoginScreen from '../screens/loginScreen.tsx'; // Update to .tsx
 import BottomTabs from './navbar.tsx';
+import AddPatientScreen from '../screens/addPatient.tsx';
 
 type RootStackParamList = {
   Login: undefined;
   MainTabs: undefined;
+  AddPatient: { onPatientAdded?: () => void };
+  Screening: { patient: any };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -30,7 +33,10 @@ export default function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {isLoggedIn ? (
-          <Stack.Screen name="MainTabs" component={BottomTabs} />
+          <>
+            <Stack.Screen name="MainTabs" component={BottomTabs} />
+            <Stack.Screen name="AddPatient" component={AddPatientScreen} />
+          </>
         ) : (
           <Stack.Screen name="Login" component={LoginScreen} />
         )}
