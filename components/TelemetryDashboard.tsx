@@ -178,7 +178,7 @@ export default function TelemetryDashboard({
               <DataRow
                 label="Amplitude"
                 value={telemetry.amp_ms2?.toFixed(2)}
-                unit="°"
+                unit="m/s2"
                 color="#9333EA"
                 isDarkMode={isDarkMode}
               />
