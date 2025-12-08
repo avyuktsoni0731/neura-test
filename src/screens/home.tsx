@@ -7,12 +7,14 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <View className='bg-white rounded-full p-2 pt-1 w-[16px] h-[16px] '>
-      <Image
-      source={require('../../assets/logo2.png')}
-      className='w-full h-full mt-0'
-      resizeMode='contain'
-      /></View>
+      <View className="bg-white h-fit w-fit">
+        <Image
+          source={require('../../assets/logoIcon.png')}
+          className="w-11 h-11"
+          resizeMode="cover"
+          style={{ width: 200, height: 200 }}
+        />
+      </View>
       <Text style={styles.title}>
         Welcome, {practitioner.name || 'Practitioner'}!
       </Text>
@@ -46,7 +48,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 0,
-    backgroundColor: 'pink',
+    backgroundColor: 'white',
   },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
   subtitle: { fontSize: 18, color: '#555', marginBottom: 5 },
