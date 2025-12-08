@@ -9,8 +9,6 @@ import {
   ScrollView,
 } from 'react-native';
 import { useAppStore } from '../store/appstore.js';
-import TelemetryDashboard from '../../components/TelemetryDashboard';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 console.log('LoginScreen store:', useAppStore);
 
@@ -72,6 +70,17 @@ export default function LoginScreen({ navigation }) {
     if (!consentScreening || !consentPatient || !consentData)
       return Alert.alert('Error', 'Please agree to all consent checkboxes');
 
+    // Check if user with same mobile and PIN already exists
+    if (practitioner.mobile === mobile && practitioner.pin === pin) {
+      // User exists, just login
+      const success = await loginWithPin(pin);
+      if (success) {
+        navigation.replace('MainTabs');
+        return;
+      }
+    }
+
+    // Create new account
     const newPractitioner = {
       name,
       mobile,
