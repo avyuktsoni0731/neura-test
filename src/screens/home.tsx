@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useAppStore } from '../store/appstore.js';
 
 export default function HomeScreen() {
@@ -7,6 +7,12 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <View className='bg-white rounded-full p-2 pt-1 w-[16px] h-[16px] '>
+      <Image
+      source={require('../../assets/logo2.png')}
+      className='w-full h-full mt-0'
+      resizeMode='contain'
+      /></View>
       <Text style={styles.title}>
         Welcome, {practitioner.name || 'Practitioner'}!
       </Text>
@@ -37,9 +43,10 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    padding: 20,
+    padding: 0,
+    backgroundColor: 'pink',
   },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
   subtitle: { fontSize: 18, color: '#555', marginBottom: 5 },

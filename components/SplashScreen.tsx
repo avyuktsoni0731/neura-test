@@ -1,4 +1,4 @@
-import React from 'react';
+  import React from 'react';
 import { View, Text, ActivityIndicator, Image } from 'react-native';
 
 export default function SplashScreen() {
@@ -9,7 +9,7 @@ export default function SplashScreen() {
         className="w-40 h-40 mb-4"
         resizeMode="contain"
       />
-      r<Text className="font-bold text-white mb-1 text-lg">NeuroSense</Text>
+      <Text className="font-bold text-white mb-1 text-lg">NeuroSense</Text>
       <ActivityIndicator size="large" className="mt-6" />
     </View>
   );
