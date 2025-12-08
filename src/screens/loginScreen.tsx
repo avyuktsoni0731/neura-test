@@ -34,6 +34,7 @@ export default function LoginScreen({ navigation }) {
   const [consentPatient, setConsentPatient] = useState(false);
   const [consentData, setConsentData] = useState(false);
 
+
   useEffect(() => {
     loadSavedPractitioner().then(() => {
       if (practitioner.name && practitioner.pin) {
