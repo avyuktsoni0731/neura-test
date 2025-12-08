@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useAppStore } from '../store/appstore.js';
 import TelemetryDashboard from '../../components/TelemetryDashboard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,6 +21,14 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <View className="bg-white h-fit w-fit">
+        <Image
+          source={require('../../assets/logoIcon.png')}
+          className="w-11 h-11"
+          resizeMode="cover"
+          style={{ width: 200, height: 200 }}
+        />
+      </View>
       <Text style={styles.title}>
         Welcome, {practitioner.name || 'Practitioner'}!
       </Text>
@@ -60,9 +68,10 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    padding: 20,
+    padding: 0,
+    backgroundColor: 'white',
   },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
   subtitle: { fontSize: 18, color: '#555', marginBottom: 5 },
