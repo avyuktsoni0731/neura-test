@@ -132,60 +132,42 @@ export default function PosturalTremorScreen({ navigation, route }) {
   if (showInstructions) {
     return (
       <View
-        className="flex-1"
+        className="flex-1 "
         style={{
           paddingTop: safeAreaInsets.top,
-          backgroundColor: isDarkMode ? '#000' : '#fff',
+          backgroundColor: '#fff',
         }}
       >
-        <ScrollView className="flex-1 px-6 py-4">
+        <ScrollView className="flex-1 px-6 py-4 ">
           {/* Header */}
-          <View className="flex-row items-center justify-between mb-6">
+          <View className="flex-col items-start justify-between mb-6">
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               className="p-2"
             >
-              <Text className="text-blue-600 text-lg">← Back</Text>
+              <Text className="text-blue-600 text-lg">Back</Text>
             </TouchableOpacity>
             <Text
-              className={`text-lg font-semibold ${
-                isDarkMode ? 'text-white' : 'text-black'
-              }`}
+              className={`text-xl font-semibold text-black text-center
+              `}
             >
               Postural Tremor Test
             </Text>
-            <TouchableOpacity onPress={reconnect} className="p-2">
-              <Text className="text-blue-600 text-lg">🔄</Text>
-            </TouchableOpacity>
           </View>
 
           {/* Patient Info */}
-          <View
-            className={`rounded-xl p-4 mb-6 ${
-              isDarkMode ? 'bg-zinc-900' : 'bg-gray-50'
-            }`}
-          >
-            <Text
-              className={`text-lg font-semibold mb-1 ${
-                isDarkMode ? 'text-white' : 'text-black'
-              }`}
-            >
+          <View className={`rounded-xl p-4 mb-6 bg-gray-50`}>
+            <Text className={`text-lg font-semibold mb-1 text-black`}>
               Patient: {patient.name}
             </Text>
-            <Text
-              className={`text-sm ${
-                isDarkMode ? 'text-zinc-400' : 'text-gray-600'
-              }`}
-            >
+            <Text className={`text-sm text-gray-600`}>
               Age: {patient.age} • Sex: {patient.sex}
             </Text>
           </View>
 
           {/* Instructions */}
           <View
-            className={`rounded-xl p-6 mb-6 ${
-              isDarkMode ? 'bg-zinc-900' : 'bg-white'
-            }`}
+            className={`rounded-xl p-6 mb-6 bg-white`}
             style={{
               shadowColor: '#000',
               shadowOffset: { width: 0, height: 2 },
@@ -193,94 +175,60 @@ export default function PosturalTremorScreen({ navigation, route }) {
               shadowRadius: 4,
             }}
           >
-            <Text
-              className={`text-xl font-bold mb-4 ${
-                isDarkMode ? 'text-white' : 'text-black'
-              }`}
-            >
+            <Text className={`text-xl font-bold mb-4 text-black`}>
               Setup Instructions
             </Text>
 
             <View className="mb-4">
-              <Text
-                className={`text-lg font-semibold mb-2 ${
-                  isDarkMode ? 'text-white' : 'text-black'
-                }`}
-              >
+              <Text className={`text-lg font-semibold mb-2 text-black`}>
                 1. Connect to WiFi Network
               </Text>
-              <Text
-                className={`text-base mb-2 ${
-                  isDarkMode ? 'text-white' : 'text-gray'
-                }`}
-              >
+              <Text className={`text-base mb-2  text-gray`}>
                 • Network Name:{' '}
                 <Text className="font-mono font-bold">Neura-Screening</Text>
               </Text>
-              <Text
-                className={`text-base mb-3 ${
-                  isDarkMode ? 'text-white' : 'text-gray-700'
-                }`}
-              >
+              <Text className={`text-base mb-3 text-gray-700`}>
                 • Password:{' '}
                 <Text className="font-mono font-bold">neura123</Text>
               </Text>
             </View>
 
             <View className="mb-4">
-              <Text
-                className={`text-lg font-semibold mb-2 ${
-                  isDarkMode ? 'text-white' : 'text-black'
-                }`}
-              >
+              <Text className={`text-lg font-semibold mb-2 text-black`}>
                 2. Test Instructions
               </Text>
-              <Text
-                className={`text-base mb-2 ${
-                  isDarkMode ? 'text-white' : 'text-gray-700'
-                }`}
-              >
+              <Text className={`text-base mb-2 text-gray-700`}>
                 Ask the patient to:
               </Text>
-              <Text
-                className={`text-base font-semibold ${
-                  isDarkMode ? 'text-white' : 'text-blue-600'
-                }`}
-              >
+              <Text className={`text-base font-semibold text-blue-600`}>
                 "Hold both arms outstretched at shoulder-height, palms down."
               </Text>
-              <Text
-                className={`text-sm mt-2 ${
-                  isDarkMode ? 'text-white' : 'text-gray-500'
-                }`}
-              >
+              <Text className={`text-sm mt-2 text-gray-500`}>
                 Duration: 30 seconds
               </Text>
             </View>
 
             {/* Connection Status */}
-            <View
-              className={`rounded-lg p-4 mb-4 ${
-                isConnected
-                  ? 'bg-green-50 border border-green-200'
-                  : 'bg-red-50 border border-red-200'
-              }`}
-            >
+            <View className={`rounded-lg p-4 mb-4 bg-gray-50`}>
               <View className="flex-col items-center justify-between gap-4">
                 <View className="flex-row items-center">
                   <Text className="text-lg mr-2">
                     {isConnected ? '✅' : '❌'}
                   </Text>
-                  <Text className="font-semibold text-white">
+                  <Text className="font-semibold text-black">
                     {isConnected ? 'Device Connected' : 'Device Not Connected'}
                   </Text>
                 </View>
                 <TouchableOpacity
                   onPress={reconnect}
                   className="bg-blue-600 px-3 py-1 rounded-lg"
-                  style={{ opacity: isConnected ? 1 : 0.5, marginLeft: 10 }}
+                  style={{
+                    opacity: isConnected ? 1 : 0.5,
+                    marginInline: 10,
+                    marginVertical: 10,
+                  }}
                 >
-                  <Text className="text-white text-sm font-semibold">
+                  <Text className="text-black border-md border-black text-xl font-semibold bg-gray-50 p-4 rounded-xl">
                     Refresh
                   </Text>
                 </TouchableOpacity>
