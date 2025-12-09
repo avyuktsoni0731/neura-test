@@ -15,6 +15,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import SplashScreen from './components/SplashScreen';
 import AppNavigator from './src/navigation/appNavigator.tsx';
+import { NavigationContainer } from '@react-navigation/native';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -35,7 +36,9 @@ function App() {
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      <NavigationContainer>
+        <AppContent />
+      </NavigationContainer>
     </SafeAreaProvider>
   );
 }
