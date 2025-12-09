@@ -1,38 +1,133 @@
 
-
 import React from "react";
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
 import { useQuizStore } from "../../store/quizStore";
+import { useNavigation } from "@react-navigation/native";
 
 export default function TestResult() {
   const answers = useQuizStore((s) => s.answers);
   const resetQuiz = useQuizStore((s) => s.resetQuiz);
+  const navigation:any = useNavigation();
 
-  // Simple demo scoring rules (editable):
-  // Q1: any non-empty = 1
-  // Q2: immediate recall contains at least 3 original words => 1
-  // Q3: digits backwards correct string check => 1
-  // Q4: image named "lion" (case-insensitive) => 1
-  // Q5: at least one hotspot tapped => 1
+  const wordList = answers.wordList || [];
+
+  const correctReco = (answers.Question2 || []).filter((w: string) =>
+    wordList.includes(w)
+  ).length;
+
+  const correctDigit = answers.Question3 === "3185" ? 1 : 0;
+
+  const namingCorrect =
+    answers.Question4?.toLowerCase().trim() === "lion" ? 1 : 0;
+
+  const spatialCorrect = answers.Question5?.correctCount || 0;
+
+  const totalScore =
+    correctReco + correctDigit + namingCorrect + spatialCorrect;
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Cognitive Test Summary</Text>
+
+      <View style={styles.card}>
+        <Text style={styles.section}>Date Orientation</Text>
+        <Text style={styles.ans}>
+          Entered: {answers.Question1?.entered || "-"}{"\n"}
+  Correct: {answers.Question1?.isCorrect ? "Yes" : "No"}
+        </Text>
+
+        <Text style={styles.section}>Word Recall (Recognition)</Text>
+        <Text style={styles.ans}>
+          Correct: {correctReco} / 4
+        </Text>
+
+        <Text style={styles.section}>Backward Digit Span</Text>
+        <Text style={styles.ans}>
+          {correctDigit === 1 ? "Correct" : "Incorrect"}
+        </Text>
+
+        <Text style={styles.section}>Naming</Text>
+        <Text style={styles.ans}>
+          {namingCorrect === 1 ? "Correct" : "Incorrect"}
+        </Text>
+
+        <Text style={styles.section}>Spatial Memory</Text>
+        <Text style={styles.ans}>
+          {spatialCorrect} / 4 correct positions
+        </Text>
+
+        <View style={styles.totalBox}>
+          <Text style={styles.totalScore}>Total Score: {totalScore} / 10</Text>
+        </View>
+      </View>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          resetQuiz();
+          navigation.navigate("Home");
+        }}
+      >
+        <Text style={styles.buttonText}>Return to Home</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { padding: 24, backgroundColor: "#f9fafb" },
+  title: { fontSize: 24, textAlign: "center", fontWeight: "800", marginBottom: 20 },
+  card: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 16,
+    elevation: 3,
+    marginBottom: 20,
+  },
+  section: { fontSize: 18, fontWeight: "700", marginTop: 20 },
+  ans: { fontSize: 16, marginTop: 6 },
+  totalBox: { marginTop: 20, padding: 12, backgroundColor: "#e0f2fe", borderRadius: 10 },
+  totalScore: { textAlign: "center", fontSize: 20, fontWeight: "800", color: "#0369a1" },
+  button: {
+    backgroundColor: "#1d4ed8",
+    paddingVertical: 15,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  buttonText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+});
+
+/*
+import React from "react";
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
+import { useQuizStore } from "../../store/quizStore";
+import { useNavigation } from "@react-navigation/native";
+
+
+export default function TestResult() {
+  const answers = useQuizStore((s) => s.answers);
+  const resetQuiz = useQuizStore((s) => s.resetQuiz);
+  const navigation: any = useNavigation();
+
   const wordList = (answers.wordList as string[]) || ["Face", "Velvet", "Church", "Daisy", "Red"];
   let score = 0;
 
   if (answers.Question1 && (answers.Question1 as string).trim().length > 0) score += 1;
-// check immediate recall
+
   if (answers.Question2) {
     const typed = (Array.isArray(answers.Question2) ? answers.Question2.join(" ") : answers.Question2 as string).toLowerCase();
     const matched = wordList.reduce((acc, w) => acc + (typed.includes(w.toLowerCase()) ? 1 : 0), 0);
     if (matched >= 3) score += 1;
   }
 
-  // digits backwards expected for Q3: we used [7,4,2,9] so expected "9247"
+
   if (answers.Question3 && (answers.Question3 as string).replace(/\D/g, "") === "9247") score += 1;
 
   if (answers.Question4 && (answers.Question4 as string).toLowerCase().includes("lion")) score += 1;
 
   if (Array.isArray(answers.Question5) && (answers.Question5 as string[]).length > 0) score += 1;
 
-  // Compose practitioner-friendly message
+
   const interpretation =
     score >= 4
       ? "Low concern on this quick screen. Recommend routine monitoring."
@@ -63,10 +158,18 @@ export default function TestResult() {
         style={styles.resetButton}
         onPress={() => {
           resetQuiz();
-        }}
-      >
+        }}>
         <Text style={styles.resetText}>Reset Answers</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.resetButton}
+        onPress={() => {
+          navigation.navigate("Home" as never);
+        }}>
+          <Text style={styles.resetText}>Exit</Text>
+      </TouchableOpacity>
+
     </ScrollView>
   );
 }
@@ -81,5 +184,7 @@ const styles = StyleSheet.create({
   qVal: { flex: 1, color: "#111827" },
   interpretation: { fontSize: 16, color: "#111827" },
   resetButton: { marginTop: 18, alignItems: "center", padding: 12, borderRadius: 10, backgroundColor: "#ef4444" },
+  exitButton: { marginTop: 18, alignItems: "center", padding: 12, borderRadius: 10, backgroundColor: "yellow"},
   resetText: { color: "#fff", fontWeight: "700" },
 });
+*/
