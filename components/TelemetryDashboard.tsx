@@ -10,12 +10,27 @@ import {
 import { useWebSocket } from '../hooks/useWebSocket';
 
 interface TelemetryData {
-  bpm: number;
-  rawBPM: number;
-  status?: string;
-  timestamp?: number;
-  hz: number;
-  amp_ms2: number;
+  tremor: {
+    frequency_hz: number;
+    amplitude: number;
+    stability: number;
+    rhythmicity: number;
+    detected: boolean;
+    type: any;
+    status:
+      | 'CONFIRMED'
+      | 'Monitoring'
+      | 'No Movement'
+      | 'Out of range'
+      | 'Low Amplitude'
+      | 'Unstable'
+      | 'Verifying';
+    consecutive: number;
+  };
+  heart: {
+    bpm: number;
+    simulated: boolean;
+  };
 }
 
 interface TelemetryDashboardProps {
@@ -170,14 +185,14 @@ export default function TelemetryDashboard({
             <View className="gap-3">
               <DataRow
                 label="Frequency"
-                value={telemetry.hz?.toFixed(2)}
+                value={telemetry.tremor.frequency_hz?.toFixed(2)}
                 unit="hz"
                 color="#2563EB"
                 isDarkMode={isDarkMode}
               />
               <DataRow
                 label="Amplitude"
-                value={telemetry.amp_ms2?.toFixed(2)}
+                value={telemetry.tremor.amplitude?.toFixed(2)}
                 unit="m/s2"
                 color="#9333EA"
                 isDarkMode={isDarkMode}
@@ -231,7 +246,7 @@ export default function TelemetryDashboard({
                     className="text-4xl font-bold"
                     style={{ color: '#DC2626' }}
                   >
-                    {telemetry.bpm}
+                    {telemetry.heart.bpm}
                   </Text>
                   <Text
                     className={`text-lg ${
@@ -243,36 +258,7 @@ export default function TelemetryDashboard({
                 </View>
               </View>
 
-              <View
-                className={`rounded-xl p-4 ${
-                  isDarkMode ? 'bg-zinc-800/50' : 'bg-zinc-100'
-                }`}
-              >
-                <Text
-                  className={`text-sm mb-1.5 ${
-                    isDarkMode ? 'text-zinc-400' : 'text-zinc-500'
-                  }`}
-                >
-                  Raw BPM
-                </Text>
-                <View className="flex-row items-baseline gap-2">
-                  <Text
-                    className="text-3xl font-bold"
-                    style={{ color: '#DC2626' }}
-                  >
-                    {telemetry.rawBPM}
-                  </Text>
-                  <Text
-                    className={`text-lg ${
-                      isDarkMode ? 'text-zinc-400' : 'text-zinc-500'
-                    }`}
-                  >
-                    BPM
-                  </Text>
-                </View>
-              </View>
-
-              {telemetry.status && (
+              {telemetry.tremor.status && (
                 <View
                   className={`rounded-xl p-4 ${
                     isDarkMode ? 'bg-zinc-800/50' : 'bg-zinc-100'
@@ -289,35 +275,14 @@ export default function TelemetryDashboard({
                     className="text-lg font-semibold"
                     style={{
                       color:
-                        telemetry.status === 'No Finger'
+                        telemetry.tremor.status === 'Out of range' ||
+                        telemetry.tremor.status === 'Low Amplitude' ||
+                        telemetry.tremor.status === 'Unstable'
                           ? '#F97316'
                           : '#22C55E',
                     }}
                   >
-                    {telemetry.status}
-                  </Text>
-                </View>
-              )}
-
-              {telemetry.timestamp && (
-                <View
-                  className={`rounded-xl p-4 ${
-                    isDarkMode ? 'bg-zinc-800/50' : 'bg-zinc-100'
-                  }`}
-                >
-                  <Text
-                    className={`text-sm mb-1.5 ${
-                      isDarkMode ? 'text-zinc-400' : 'text-zinc-500'
-                    }`}
-                  >
-                    Timestamp
-                  </Text>
-                  <Text
-                    className={`text-base font-mono ${
-                      isDarkMode ? 'text-gray-50' : 'text-zinc-900'
-                    }`}
-                  >
-                    {telemetry.timestamp?.toLocaleString()}
+                    {telemetry.tremor.status}
                   </Text>
                 </View>
               )}
