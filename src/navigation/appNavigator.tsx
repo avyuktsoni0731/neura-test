@@ -12,8 +12,10 @@ import Question3 from '../screens/questions/q3.tsx';
 import Question4 from '../screens/questions/q4.tsx';
 import Question5 from '../screens/questions/q5.tsx';
 import TestResult from '../screens/questions/result.tsx';
+import HomeScreen from '../screens/home.tsx';
 
 export type RootStackParamList = {
+  Home: undefined;
   Login: undefined;
   MainTabs: undefined;
   AddPatient: { onPatientAdded?: () => void };
@@ -37,21 +39,21 @@ export default function AppNavigator() {
   }, []);
 
   if (isLoading) {
-    return null; // Or a loading screen
+    return null; 
   }
 
   return (
-    <NavigationContainer>
+
   <Stack.Navigator
     screenOptions={{ headerShown: false }}
     initialRouteName={isLoggedIn ? "MainTabs" : "Login"} // start where you want
   >
-    {/* Auth Screens */}
+
     <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="Home" component={HomeScreen} />
     <Stack.Screen name="MainTabs" component={BottomTabs} />
     <Stack.Screen name="AddPatient" component={AddPatientScreen} />
 
-    {/* Question Screens */}
     <Stack.Screen name="Question1" component={Question1} />
     <Stack.Screen name="Question2" component={Question2} />
     <Stack.Screen name="Question3" component={Question3} />
@@ -59,7 +61,7 @@ export default function AppNavigator() {
     <Stack.Screen name="Question5" component={Question5} />
     <Stack.Screen name="TestResult" component={TestResult} />
   </Stack.Navigator>
-</NavigationContainer>
+
 
   );
 }
