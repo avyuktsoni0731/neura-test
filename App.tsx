@@ -6,6 +6,7 @@
  */
 
 import './app.css';
+import './nativewind-env.d.ts';
 import { StatusBar, useColorScheme, View } from 'react-native';
 import {
   SafeAreaProvider,
