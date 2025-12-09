@@ -8,6 +8,7 @@ import LoginScreen from '../screens/loginScreen.tsx'; // Update to .tsx
 import BottomTabs from './navbar.tsx';
 import AddPatientScreen from '../screens/addPatient.tsx';
 import PosturalTremorScreen from '../screens/PosturalTremor.tsx';
+import TimedUpAndGoScreen from '../screens/TimedUpAndGo.tsx';
 
 type RootStackParamList = {
   Login: undefined;
@@ -15,6 +16,7 @@ type RootStackParamList = {
   AddPatient: { onPatientAdded?: () => void };
   Screening: { patient: any };
   PosturalTremor: { patient: any };
+  TimedUpAndGo: { patient: any };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -41,6 +43,11 @@ export default function AppNavigator() {
             <Stack.Screen
               name="PosturalTremor"
               component={PosturalTremorScreen}
+            />
+            <Stack.Screen
+              name="TimedUpAndGo"
+              component={TimedUpAndGoScreen}
+              options={{ headerShown: false }}
             />
           </>
         ) : (
