@@ -65,7 +65,7 @@ export default function TestResult() {
         style={styles.button}
         onPress={() => {
           resetQuiz();
-          navigation.navigate("Home");
+          navigation.navigate("MainTabs", {screen: "Home"});
         }}
       >
         <Text style={styles.buttonText}>Return to Home</Text>

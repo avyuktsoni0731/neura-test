@@ -23,7 +23,7 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 import AddPatientScreen from './addPatient.js';
 import { RootStackParamList } from '../navigation/appNavigator.tsx';
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { practitioner, logout, patients, loadPatients } = useAppStore();
   const [showTelemetry, setShowTelemetry] = useState(false);
@@ -32,13 +32,11 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     loadPatients();
-    // Load session history from storage
     loadSessionHistory();
   }, []);
 
   const loadSessionHistory = async () => {
-    // TODO: Load from AsyncStorage
-    // For now, mock data
+
     setSessionHistory([]);
   };
 
@@ -68,8 +66,8 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate('AddPatient', { onPatientAdded: loadPatients });
   };
 
-  const handlePatientPress = patient => {
-    navigation.navigate('PatientDetails', { patient });
+  const handlePatientPress = (patient: typeof patients[0]) => {
+    navigation.navigate('Screening', { patient });
   };
 
   if (showTelemetry) {
@@ -80,7 +78,7 @@ export default function HomeScreen({ navigation }) {
     );
   }
 
-  const renderPatient = ({ item }) => {
+  const renderPatient = ({ item }: { item: typeof patients[0] }) => {
     const lastSession = getPatientLastSession(item.id);
     const statusColor = getStatusColor(lastSession?.status || null);
 
@@ -105,9 +103,10 @@ export default function HomeScreen({ navigation }) {
   return (
     <ScrollView
       style={styles.container}
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={[styles.contentContainer, {paddingBottom: 120}]}
+      showsVerticalScrollIndicator={false}
     >
-      {/* Logo */}
+  
       <View style={styles.logoContainer}>
         <Image
           source={require('../../assets/logoIcon.png')}
@@ -116,7 +115,6 @@ export default function HomeScreen({ navigation }) {
         />
       </View>
 
-      {/* Welcome Section */}
       <View style={styles.welcomeSection}>
         <Text style={styles.welcomeText}>
           Welcome, {practitioner.name || 'Practitioner'}!
