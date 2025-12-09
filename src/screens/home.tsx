@@ -4,8 +4,12 @@ import { useAppStore } from '../store/appstore.js';
 import TelemetryDashboard from '../../components/TelemetryDashboard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState } from 'react';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import AddPatientScreen from './addPatient.js';
+import { RootStackParamList } from '../navigation/appNavigator.tsx';
 
 export default function HomeScreen() {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { practitioner, logout } = useAppStore();
   const [showTelemetry, setShowTelemetry] = useState(false);
 
@@ -59,6 +63,15 @@ export default function HomeScreen() {
           onPress={() => setShowTelemetry(true)}
         >
           <Text className="text-white">Open Telemetry Dashboard</Text>
+        </TouchableOpacity> 
+      </View>
+      <View style={{ padding: 20 }}>
+        <TouchableOpacity
+        className="items-center justify-center mb-4 p-4 rounded-2xl bg-black"
+        onPress={() => navigation.navigate('Question1')}>
+          <Text className="text-white text-lg font-semibold">
+            Start Test
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
