@@ -50,8 +50,8 @@ export default function PosturalTremorScreen({ navigation, route }) {
   useEffect(() => {
     if (isRecording && telemetry) {
       console.log('Recording telemetry:', telemetry);
-      frequencyReadingsRef.current.push(telemetry.hz);
-      amplitudeReadingsRef.current.push(telemetry.amp_ms2);
+      frequencyReadingsRef.current.push(telemetry.tremor.frequency_hz);
+      amplitudeReadingsRef.current.push(telemetry.tremor.amplitude);
       console.log(
         'Frequency readings count:',
         frequencyReadingsRef.current.length,
@@ -413,7 +413,7 @@ export default function PosturalTremorScreen({ navigation, route }) {
                       isDarkMode ? 'text-white' : 'text-blue-600'
                     }`}
                   >
-                    {telemetry.hz.toFixed(2)} Hz
+                    {telemetry.tremor.frequency_hz.toFixed(2)} Hz
                   </Text>
                 </View>
 
@@ -430,7 +430,7 @@ export default function PosturalTremorScreen({ navigation, route }) {
                       isDarkMode ? 'text-white' : 'text-purple-600'
                     }`}
                   >
-                    {telemetry.amp_ms2.toFixed(2)} m/s²
+                    {telemetry.tremor.amplitude.toFixed(2)} m/s²
                   </Text>
                 </View>
               </View>

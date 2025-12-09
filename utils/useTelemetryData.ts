@@ -1,13 +1,37 @@
 import { useWebSocket } from '../hooks/useWebSocket';
 import { useState, useEffect } from 'react';
 
+// interface TelemetryData {
+//   bpm: number;
+//   rawBPM: number;
+//   status?: string;
+//   timestamp?: number;
+//   hz: number;
+//   amp_ms2: number;
+// }
+
 interface TelemetryData {
-  bpm: number;
-  rawBPM: number;
-  status?: string;
-  timestamp?: number;
-  hz: number;
-  amp_ms2: number;
+  tremor: {
+    frequency_hz: number;
+    amplitude: number;
+    stability: number;
+    rhythmicity: number;
+    detected: boolean;
+    type: any;
+    status:
+      | 'CONFIRMED'
+      | 'Monitoring'
+      | 'No Movement'
+      | 'Out of range'
+      | 'Low Amplitude'
+      | 'Unstable'
+      | 'Verifying';
+    consecutive: number;
+  };
+  heart: {
+    bpm: number;
+    simulated: boolean;
+  };
 }
 
 const WS_URL = 'ws://192.168.4.1:81/';
