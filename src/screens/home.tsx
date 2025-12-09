@@ -19,8 +19,12 @@ interface SessionHistory {
   status: 'success' | 'warning' | 'error' | 'none';
   results?: any;
 }
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import AddPatientScreen from './addPatient.js';
+import { RootStackParamList } from '../navigation/appNavigator.tsx';
 
 export default function HomeScreen({ navigation }) {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { practitioner, logout, patients, loadPatients } = useAppStore();
   const [showTelemetry, setShowTelemetry] = useState(false);
   const [sessionHistory, setSessionHistory] = useState<SessionHistory[]>([]);
@@ -162,6 +166,14 @@ export default function HomeScreen({ navigation }) {
 
         <TouchableOpacity style={styles.logoutButton} onPress={logout}>
           <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{ padding: 20 }}>
+        <TouchableOpacity
+          className="items-center justify-center mb-4 p-4 rounded-2xl bg-black"
+          onPress={() => navigation.navigate('Question1')}
+        >
+          <Text className="text-white text-lg font-semibold">Start Test</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

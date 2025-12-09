@@ -14,7 +14,7 @@ import {
 } from 'react-native-safe-area-context';
 import React, { useEffect, useState } from 'react';
 import SplashScreen from './components/SplashScreen';
-import AppNavigator from './src/navigataion/appNavigator.tsx';
+import AppNavigator from './src/navigation/appNavigator.tsx';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
