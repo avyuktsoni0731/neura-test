@@ -21,7 +21,6 @@ interface SessionHistory {
   results?: any;
 }
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import AddPatientScreen from './addPatient.js';
 import { RootStackParamList } from '../navigation/appNavigator.tsx';
 
 export default function HomeScreen() {
@@ -38,7 +37,6 @@ export default function HomeScreen() {
   }, []);
 
   const loadSessionHistory = async () => {
-
     setSessionHistory([]);
   };
 
@@ -68,7 +66,7 @@ export default function HomeScreen() {
     navigation.navigate('AddPatient', { onPatientAdded: loadPatients });
   };
 
-  const handlePatientPress = (patient: typeof patients[0]) => {
+  const handlePatientPress = (patient: (typeof patients)[0]) => {
     navigation.navigate('Screening', { patient });
   };
 
@@ -80,7 +78,7 @@ export default function HomeScreen() {
     );
   }
 
-  const renderPatient = ({ item }: { item: typeof patients[0] }) => {
+  const renderPatient = ({ item }: { item: (typeof patients)[0] }) => {
     const lastSession = getPatientLastSession(item.id);
     const statusColor = getStatusColor(lastSession?.status || null);
 
@@ -105,10 +103,9 @@ export default function HomeScreen() {
   return (
     <ScrollView
       style={styles.container}
-      contentContainerStyle={[styles.contentContainer, {paddingBottom: 120}]}
+      contentContainerStyle={[styles.contentContainer, { paddingBottom: 120 }]}
       showsVerticalScrollIndicator={false}
     >
-  
       <View style={styles.logoContainer}>
         <Image
           source={require('../../assets/logoIcon.png')}
@@ -119,7 +116,9 @@ export default function HomeScreen() {
 
       <View style={styles.welcomeSection}>
         <Text style={styles.welcomeText}>
-          {t('home.welcomeText', { name: practitioner.name || t('home.practitioner') })}
+          {t('home.welcomeText', {
+            name: practitioner.name || t('home.practitioner'),
+          })}
         </Text>
         <Text style={styles.roleText}>
           {practitioner.role || t('home.healthcareProfessional')}
@@ -140,9 +139,7 @@ export default function HomeScreen() {
         {patients.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyText}>{t('home.noPatientsYet')}</Text>
-            <Text style={styles.emptySubtext}>
-              {t('home.addFirstPatient')}
-            </Text>
+            <Text style={styles.emptySubtext}>{t('home.addFirstPatient')}</Text>
           </View>
         ) : (
           <FlatList
@@ -161,7 +158,9 @@ export default function HomeScreen() {
           style={styles.telemetryButton}
           onPress={() => setShowTelemetry(true)}
         >
-          <Text style={styles.telemetryText}>{t('home.telemetryDashboard')}</Text>
+          <Text style={styles.telemetryText}>
+            {t('home.telemetryDashboard')}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.logoutButton} onPress={logout}>
@@ -173,7 +172,9 @@ export default function HomeScreen() {
           className="items-center justify-center mb-4 p-4 rounded-2xl bg-black"
           onPress={() => navigation.navigate('Question1')}
         >
-          <Text className="text-white text-lg font-semibold">{t('home.startTest')}</Text>
+          <Text className="text-white text-lg font-semibold">
+            {t('home.startTest')}
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

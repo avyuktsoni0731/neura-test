@@ -7,12 +7,9 @@
 
 import './app.css';
 import './nativewind-env.d.ts';
-import './src/i18n'; // Initialize i18n
-import { StatusBar, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import './src/i18n';
+import { StatusBar, useColorScheme } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import React, { useEffect, useState } from 'react';
 import SplashScreen from './components/SplashScreen';
 import AppNavigator from './src/navigation/appNavigator.tsx';
@@ -25,9 +22,8 @@ function App() {
 
   useEffect(() => {
     const initializeApp = async () => {
-      // Load saved language preference
       await loadSavedLanguage();
-      
+
       const timer = setTimeout(() => {
         setIsLoading(false);
       }, 2000);
@@ -45,20 +41,8 @@ function App() {
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NavigationContainer>
-        <AppContent />
-      </NavigationContainer>
-    </SafeAreaProvider>
-  );
-}
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View className="flex-1" style={{ paddingTop: safeAreaInsets.top }}>
       <AppNavigator />
-    </View>
+    </SafeAreaProvider>
   );
 }
 
