@@ -1,7 +1,7 @@
 // src/ml/inference.ts
 import * as ort from 'onnxruntime-react-native';
 import featureNamesJson from '../../assets/ml/features_name.json';
-import scalerParamsJson from '../../assets/ml/scaler_params.json';
+import scalerParamsJson from '../../assets/ml/scalar_params.json';
 
 // Types
 type ScalerParams = {
