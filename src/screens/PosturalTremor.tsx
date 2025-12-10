@@ -6,11 +6,13 @@ import {
   ScrollView,
   useColorScheme,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useTelemetryData from '../../utils/useTelemetryData';
 import { useSessionStore } from '../store/sessionStore';
 
 export default function PosturalTremorScreen({ navigation, route }) {
+  const { t } = useTranslation();
   const { patient } = route.params;
   const { savePosturalTremorResults } = useSessionStore();
   const [showInstructions, setShowInstructions] = useState(true);
@@ -138,23 +140,23 @@ export default function PosturalTremorScreen({ navigation, route }) {
               onPress={() => navigation.goBack()}
               className="p-2"
             >
-              <Text className="text-blue-600 text-lg">Back</Text>
+              <Text className="text-blue-600 text-lg">{t('posturalTremor.back')}</Text>
             </TouchableOpacity>
             <Text
               className={`text-xl font-semibold text-black text-center
               `}
             >
-              Postural Tremor Test
+              {t('posturalTremor.title')}
             </Text>
           </View>
 
           {/* Patient Info */}
           <View className={`rounded-xl p-4 mb-6 bg-gray-50`}>
             <Text className={`text-lg font-semibold mb-1 text-black`}>
-              Patient: {patient.name}
+              {t('posturalTremor.patient')}: {patient.name}
             </Text>
             <Text className={`text-sm text-gray-600`}>
-              Age: {patient.age} • Sex: {patient.sex}
+              {t('patient.detailsWithSex', { age: patient.age, sex: patient.sex })}
             </Text>
           </View>
 
@@ -169,35 +171,35 @@ export default function PosturalTremorScreen({ navigation, route }) {
             }}
           >
             <Text className={`text-xl font-bold mb-4 text-black`}>
-              Setup Instructions
+              {t('posturalTremor.setupInstructions')}
             </Text>
 
             <View className="mb-4">
               <Text className={`text-lg font-semibold mb-2 text-black`}>
-                1. Connect to WiFi Network
+                {t('posturalTremor.connectWiFi')}
               </Text>
               <Text className={`text-base mb-2  text-gray`}>
-                • Network Name:{' '}
+                • {t('posturalTremor.networkName')}{' '}
                 <Text className="font-mono font-bold">Neura-Screening</Text>
               </Text>
               <Text className={`text-base mb-3 text-gray-700`}>
-                • Password:{' '}
+                • {t('posturalTremor.password')}{' '}
                 <Text className="font-mono font-bold">neura123</Text>
               </Text>
             </View>
 
             <View className="mb-4">
               <Text className={`text-lg font-semibold mb-2 text-black`}>
-                2. Test Instructions
+                {t('posturalTremor.testInstructions')}
               </Text>
               <Text className={`text-base mb-2 text-gray-700`}>
-                Ask the patient to:
+                {t('posturalTremor.askPatient')}
               </Text>
               <Text className={`text-base font-semibold text-blue-600`}>
-                "Hold both arms outstretched at shoulder-height, palms down."
+                "{t('posturalTremor.tremorInstruction')}"
               </Text>
               <Text className={`text-sm mt-2 text-gray-500`}>
-                Duration: 30 seconds
+                {t('posturalTremor.duration')}
               </Text>
             </View>
 
@@ -209,7 +211,7 @@ export default function PosturalTremorScreen({ navigation, route }) {
                     {isConnected ? '✅' : '❌'}
                   </Text>
                   <Text className="font-semibold text-black">
-                    {isConnected ? 'Device Connected' : 'Device Not Connected'}
+                    {isConnected ? t('posturalTremor.deviceConnected') : t('posturalTremor.deviceNotConnected')}
                   </Text>
                 </View>
                 <TouchableOpacity
@@ -222,13 +224,13 @@ export default function PosturalTremorScreen({ navigation, route }) {
                   }}
                 >
                   <Text className="text-black border-md border-black text-xl font-semibold bg-gray-50 p-4 rounded-xl">
-                    Refresh
+                    {t('posturalTremor.refresh')}
                   </Text>
                 </TouchableOpacity>
               </View>
               {!isConnected && (
                 <Text className="text-white text-sm mt-1">
-                  Connect to Neura-Screening WiFi, then tap Refresh
+                  {t('posturalTremor.connectWiFiHint')}
                 </Text>
               )}
             </View>
@@ -249,7 +251,7 @@ export default function PosturalTremorScreen({ navigation, route }) {
                 isConnected ? 'text-white' : 'text-gray-500'
               }`}
             >
-              {isConnected ? 'Start Test' : 'Connect Device First'}
+              {isConnected ? t('posturalTremor.startTest') : t('posturalTremor.connectDeviceFirst')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -273,7 +275,7 @@ export default function PosturalTremorScreen({ navigation, route }) {
             onPress={() => setShowInstructions(true)}
             className="p-2"
           >
-            <Text className="text-blue-600 text-lg">← Instructions</Text>
+            <Text className="text-blue-600 text-lg">{t('posturalTremor.instructions')}</Text>
           </TouchableOpacity>
           <Text
             className={`text-lg font-semibold ${
@@ -281,13 +283,13 @@ export default function PosturalTremorScreen({ navigation, route }) {
             }`}
           >
             {isRecording
-              ? `Recording... ${timeRemaining}s`
+              ? t('posturalTremor.recording', { time: timeRemaining })
               : averages
-              ? 'Test Complete'
-              : 'Ready'}
+              ? t('posturalTremor.testComplete')
+              : t('posturalTremor.ready')}
           </Text>
           <TouchableOpacity onPress={() => navigation.goBack()} className="p-2">
-            <Text className="text-red-600 text-lg">Stop</Text>
+            <Text className="text-red-600 text-lg">{t('posturalTremor.stop')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -306,7 +308,7 @@ export default function PosturalTremorScreen({ navigation, route }) {
                 isDarkMode ? 'text-white' : 'text-gray-600'
               }`}
             >
-              seconds remaining
+              {t('posturalTremor.secondsRemaining')}
             </Text>
           </View>
         )}
@@ -324,7 +326,7 @@ export default function PosturalTremorScreen({ navigation, route }) {
                   isDarkMode ? 'text-white' : 'text-black'
                 }`}
               >
-                Test Results (30s Average)
+                {t('posturalTremor.testResults')}
               </Text>
 
               <View className="gap-3">
@@ -334,7 +336,7 @@ export default function PosturalTremorScreen({ navigation, route }) {
                       isDarkMode ? 'text-white' : 'text-gray-700'
                     }`}
                   >
-                    Average Frequency:
+                    {t('posturalTremor.averageFrequency')}
                   </Text>
                   <Text
                     className={`text-xl font-bold ${
@@ -351,7 +353,7 @@ export default function PosturalTremorScreen({ navigation, route }) {
                       isDarkMode ? 'text-white' : 'text-gray-700'
                     }`}
                   >
-                    Average Amplitude:
+                    {t('posturalTremor.averageAmplitude')}
                   </Text>
                   <Text
                     className={`text-xl font-bold ${
@@ -368,7 +370,7 @@ export default function PosturalTremorScreen({ navigation, route }) {
                       isDarkMode ? 'text-zinc-400' : 'text-gray-500'
                     }`}
                   >
-                    Samples collected:
+                    {t('posturalTremor.samplesCollected')}
                   </Text>
                   <Text
                     className={`text-sm ${
@@ -396,7 +398,7 @@ export default function PosturalTremorScreen({ navigation, route }) {
                   isDarkMode ? 'text-white' : 'text-black'
                 }`}
               >
-                Live Tremor Data
+                {t('posturalTremor.liveTremorData')}
               </Text>
 
               <View className="gap-3">
@@ -406,7 +408,7 @@ export default function PosturalTremorScreen({ navigation, route }) {
                       isDarkMode ? 'text-white' : 'text-gray-700'
                     }`}
                   >
-                    Frequency:
+                    {t('posturalTremor.frequency')}
                   </Text>
                   <Text
                     className={`text-xl font-bold ${
@@ -423,7 +425,7 @@ export default function PosturalTremorScreen({ navigation, route }) {
                       isDarkMode ? 'text-white' : 'text-gray-700'
                     }`}
                   >
-                    Amplitude:
+                    {t('posturalTremor.amplitude')}
                   </Text>
                   <Text
                     className={`text-xl font-bold ${
@@ -443,7 +445,7 @@ export default function PosturalTremorScreen({ navigation, route }) {
                 isDarkMode ? 'text-zinc-400' : 'text-gray-600'
               }`}
             >
-              Waiting for sensor data...
+              {t('posturalTremor.waitingForData')}
             </Text>
           </View>
         ) : null}

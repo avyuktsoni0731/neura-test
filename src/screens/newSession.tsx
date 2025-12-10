@@ -7,6 +7,7 @@ import {
   FlatList,
   Alert,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store/appstore.js';
 
 interface Patient {
@@ -21,6 +22,7 @@ interface Patient {
 }
 
 export default function NewSessionScreen({ navigation }) {
+  const { t } = useTranslation();
   const { practitioner, patients, loadPatients, deletePatient } = useAppStore();
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
@@ -34,7 +36,7 @@ export default function NewSessionScreen({ navigation }) {
 
   const handleStartScreening = () => {
     if (!selectedPatient) {
-      Alert.alert('Error', 'Please select a patient first');
+      Alert.alert(t('common.error'), t('newSession.selectPatientFirst'));
       return;
     }
     // Start screening session
@@ -43,15 +45,15 @@ export default function NewSessionScreen({ navigation }) {
 
   const handleDeletePatient = (patientId: string, patientName: string) => {
     Alert.alert(
-      'Delete Patient',
-      `Are you sure you want to delete ${patientName}?`,
+      t('newSession.deletePatient'),
+      t('newSession.deleteConfirm', { name: patientName }),
       [
         {
-          text: 'Cancel',
+          text: t('common.cancel'),
           style: 'cancel',
         },
         {
-          text: 'Delete',
+          text: t('newSession.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -61,7 +63,7 @@ export default function NewSessionScreen({ navigation }) {
                 setSelectedPatient(null);
               }
             } catch (error) {
-              Alert.alert('Error', 'Failed to delete patient');
+              Alert.alert(t('common.error'), t('newSession.failedToDelete'));
             }
           },
         },
@@ -81,10 +83,12 @@ export default function NewSessionScreen({ navigation }) {
         <View style={styles.patientInfo}>
           <Text style={styles.patientName}>{item.name}</Text>
           <Text style={styles.patientDetails}>
-            Age: {item.age} • Sex: {item.sex}
+            {t('patient.detailsWithSex', { age: item.age, sex: item.sex })}
           </Text>
           {item.phone && (
-            <Text style={styles.patientPhone}>Phone: {item.phone}</Text>
+            <Text style={styles.patientPhone}>
+              {t('patient.phone', { phone: item.phone })}
+            </Text>
           )}
         </View>
         <TouchableOpacity
@@ -99,16 +103,16 @@ export default function NewSessionScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>New Session</Text>
+      <Text style={styles.header}>{t('newSession.title')}</Text>
       <Text style={styles.subText}>
-        Add a patient or select from existing patients to start screening.
+        {t('newSession.subtitle')}
       </Text>
 
       <TouchableOpacity style={styles.addBtn} onPress={handleAddPatient}>
-        <Text style={styles.addBtnText}>+ Add New Patient</Text>
+        <Text style={styles.addBtnText}>{t('newSession.addNewPatient')}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.sectionTitle}>Existing Patients</Text>
+      <Text style={styles.sectionTitle}>{t('newSession.existingPatients')}</Text>
 
       <View
         className="flex-col justify-between gap-4"
@@ -122,7 +126,7 @@ export default function NewSessionScreen({ navigation }) {
           contentContainerStyle={styles.patientListContent}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
-            <Text style={styles.emptyText}>No patients added yet</Text>
+            <Text style={styles.emptyText}>{t('newSession.noPatientsYet')}</Text>
           }
         />
 
@@ -131,7 +135,7 @@ export default function NewSessionScreen({ navigation }) {
             style={styles.startBtn}
             onPress={handleStartScreening}
           >
-            <Text style={styles.startBtnText}>Start Screening</Text>
+            <Text style={styles.startBtnText}>{t('newSession.startScreening')}</Text>
           </TouchableOpacity>
         )}
       </View>

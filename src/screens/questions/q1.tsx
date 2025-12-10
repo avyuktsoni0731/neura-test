@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/appNavigator"; 
 import { useQuizStore } from '../../store/quizStore';
@@ -7,6 +8,7 @@ import { useQuizStore } from '../../store/quizStore';
 type Props = NativeStackScreenProps<RootStackParamList, "Question1">;
 
 export default function Question1({ navigation }: Props) {
+  const { t } = useTranslation();
   const [answer, setAnswer] = useState("");
   const setQuizAnswer = useQuizStore((state) => state.setAnswer);
 
@@ -33,15 +35,17 @@ export default function Question1({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.progress}>Question 1 / 5</Text>
+      <Text style={styles.progress}>
+        {t('questions.question')} 1 {t('questions.of')} 5
+      </Text>
 
       <Text style={styles.questionText}>
-        1. Enter today's date (DD-MM-YYYY)
+        1. {t('questions.enterDate')}
       </Text>
 
       <TextInput
         keyboardType="numeric"
-        placeholder="DD-MM-YYYY"
+        placeholder={t('questions.datePlaceholder')}
         placeholderTextColor="#aaa"
         value={answer}
         maxLength={10}
@@ -54,7 +58,7 @@ export default function Question1({ navigation }: Props) {
         disabled={answer.length !== 10}
         onPress={handleNext}
       >
-        <Text style={styles.buttonText}>Next</Text>
+        <Text style={styles.buttonText}>{t('common.next')}</Text>
       </TouchableOpacity>
     </View>
   );

@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/appNavigator";
 import { useQuizStore } from "../../store/quizStore";
@@ -15,6 +16,7 @@ const ORIGINAL_WORDS = ["Face", "Velvet", "Church", "Daisy"];
 const DISTRACTORS = ["River", "Window", "Tiger", "Bottle"];
 
 export default function Question2({ navigation }: Props) {
+  const { t } = useTranslation();
   const [phase, setPhase] = useState<"show" | "recall">("show");
   const [choices, setChoices] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
@@ -52,11 +54,13 @@ export default function Question2({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.progress}>Question 2 / 5</Text>
+      <Text style={styles.progress}>
+        {t('questions.question')} 2 {t('questions.of')} 5
+      </Text>
 
       {phase === "show" ? (
         <>
-          <Text style={styles.question}>Memorize the following words:</Text>
+          <Text style={styles.question}>{t('questions.memorizeWords')}</Text>
 
           <View style={styles.wordBox}>
             {ORIGINAL_WORDS.map((w) => (
@@ -66,7 +70,7 @@ export default function Question2({ navigation }: Props) {
         </>
       ) : (
         <>
-          <Text style={styles.question}>Select the 4 words you saw earlier:</Text>
+          <Text style={styles.question}>{t('questions.selectWords')}</Text>
 
           <View style={styles.choiceBox}>
             {choices.map((w) => (
@@ -95,7 +99,7 @@ export default function Question2({ navigation }: Props) {
             disabled={selected.length !== 4}
             onPress={handleNext}
           >
-            <Text style={styles.buttonText}>Next</Text>
+            <Text style={styles.buttonText}>{t('common.next')}</Text>
           </TouchableOpacity>
         </>
       )}

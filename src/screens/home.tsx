@@ -8,6 +8,7 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store/appstore.js';
 import TelemetryDashboard from '../../components/TelemetryDashboard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -24,6 +25,7 @@ import AddPatientScreen from './addPatient.js';
 import { RootStackParamList } from '../navigation/appNavigator.tsx';
 
 export default function HomeScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { practitioner, logout, patients, loadPatients } = useAppStore();
   const [showTelemetry, setShowTelemetry] = useState(false);
@@ -90,7 +92,7 @@ export default function HomeScreen() {
         <View style={styles.patientInfo}>
           <Text style={styles.patientName}>{item.name}</Text>
           <Text style={styles.patientDetails}>
-            Age: {item.age} • {item.sex}
+            {t('patient.details', { age: item.age, sex: item.sex })}
           </Text>
         </View>
         <View
@@ -117,10 +119,10 @@ export default function HomeScreen() {
 
       <View style={styles.welcomeSection}>
         <Text style={styles.welcomeText}>
-          Welcome, {practitioner.name || 'Practitioner'}!
+          {t('home.welcomeText', { name: practitioner.name || t('home.practitioner') })}
         </Text>
         <Text style={styles.roleText}>
-          {practitioner.role || 'Healthcare Professional'}
+          {practitioner.role || t('home.healthcareProfessional')}
         </Text>
       </View>
 
@@ -129,17 +131,17 @@ export default function HomeScreen() {
         style={styles.addPatientButton}
         onPress={handleAddPatient}
       >
-        <Text style={styles.addPatientText}>+ Add New Patient</Text>
+        <Text style={styles.addPatientText}>{t('home.addNewPatient')}</Text>
       </TouchableOpacity>
 
       {/* Patient List */}
       <View style={styles.patientsSection}>
-        <Text style={styles.sectionTitle}>Patients</Text>
+        <Text style={styles.sectionTitle}>{t('home.patients')}</Text>
         {patients.length === 0 ? (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyText}>No patients added yet</Text>
+            <Text style={styles.emptyText}>{t('home.noPatientsYet')}</Text>
             <Text style={styles.emptySubtext}>
-              Add your first patient to get started
+              {t('home.addFirstPatient')}
             </Text>
           </View>
         ) : (
@@ -159,11 +161,11 @@ export default function HomeScreen() {
           style={styles.telemetryButton}
           onPress={() => setShowTelemetry(true)}
         >
-          <Text style={styles.telemetryText}>Telemetry Dashboard</Text>
+          <Text style={styles.telemetryText}>{t('home.telemetryDashboard')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-          <Text style={styles.logoutText}>Logout</Text>
+          <Text style={styles.logoutText}>{t('common.logout')}</Text>
         </TouchableOpacity>
       </View>
       <View style={{ padding: 20 }}>
@@ -171,7 +173,7 @@ export default function HomeScreen() {
           className="items-center justify-center mb-4 p-4 rounded-2xl bg-black"
           onPress={() => navigation.navigate('Question1')}
         >
-          <Text className="text-white text-lg font-semibold">Start Test</Text>
+          <Text className="text-white text-lg font-semibold">{t('home.startTest')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

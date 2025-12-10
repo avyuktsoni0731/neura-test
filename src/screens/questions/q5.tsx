@@ -1,6 +1,7 @@
 // src/screens/questions/q5.tsx
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/appNavigator";
 import { useQuizStore } from "../../store/quizStore";
@@ -11,6 +12,7 @@ const GRID_SIZE = 3; // 3x3 grid
 const TOTAL_POINTS = 4; // 4 circles shown
 
 export default function Question5({ navigation }: Props) {
+  const { t } = useTranslation();
   const [shownPositions, setShownPositions] = useState<number[]>([]);
   const [selectedPositions, setSelectedPositions] = useState<number[]>([]);
   const [step, setStep] = useState<"show" | "recall">("show");
@@ -56,10 +58,12 @@ export default function Question5({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.progress}>Question 5 / 5</Text>
+      <Text style={styles.progress}>
+        {t('questions.question')} 5 {t('questions.of')} 5
+      </Text>
 
       <Text style={styles.question}>
-        5. Remember the positions of the circles.
+        5. {t('questions.spatialMemory')}
       </Text>
 
       <View style={styles.grid}>
@@ -83,7 +87,7 @@ export default function Question5({ navigation }: Props) {
 
       {step === "recall" && (
         <TouchableOpacity style={styles.button} onPress={handleFinish}>
-          <Text style={styles.buttonText}>Finish Test</Text>
+          <Text style={styles.buttonText}>{t('questions.finishTest')}</Text>
         </TouchableOpacity>
       )}
     </View>

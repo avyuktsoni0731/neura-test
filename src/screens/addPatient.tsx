@@ -8,9 +8,11 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store/appstore.js';
 
 export default function AddPatientScreen({ navigation, route }) {
+  const { t } = useTranslation();
   const { practitioner, savePatient } = useAppStore();
   const { onPatientAdded } = route.params || {};
 
@@ -23,15 +25,15 @@ export default function AddPatientScreen({ navigation, route }) {
   const handleSavePatient = async () => {
     // Validation
     if (!name.trim()) {
-      Alert.alert('Error', 'Please enter patient name or ID');
+      Alert.alert(t('common.error'), t('addPatient.validationName'));
       return;
     }
     if (!age.trim()) {
-      Alert.alert('Error', 'Please enter patient age');
+      Alert.alert(t('common.error'), t('addPatient.validationAge'));
       return;
     }
     if (!sex.trim()) {
-      Alert.alert('Error', 'Please select patient sex');
+      Alert.alert(t('common.error'), t('addPatient.validationSex'));
       return;
     }
 
@@ -48,9 +50,9 @@ export default function AddPatientScreen({ navigation, route }) {
 
     try {
       await savePatient(patient);
-      Alert.alert('Success', 'Patient added successfully', [
+      Alert.alert(t('common.success'), t('addPatient.patientAddedSuccess'), [
         {
-          text: 'OK',
+          text: t('common.ok'),
           onPress: () => {
             onPatientAdded?.();
             navigation.goBack();
@@ -58,7 +60,7 @@ export default function AddPatientScreen({ navigation, route }) {
         },
       ]);
     } catch (error) {
-      Alert.alert('Error', 'Failed to save patient');
+      Alert.alert(t('common.error'), t('addPatient.failedToSave'));
     }
   };
 
@@ -80,50 +82,50 @@ export default function AddPatientScreen({ navigation, route }) {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>Add New Patient</Text>
+      <Text style={styles.header}>{t('addPatient.title')}</Text>
 
-      <Text style={styles.label}>Name or ID *</Text>
+      <Text style={styles.label}>{t('addPatient.nameOrId')}</Text>
       <TextInput
         style={styles.input}
         value={name}
         onChangeText={setName}
-        placeholder="Enter patient name or ID"
+        placeholder={t('addPatient.enterNameOrId')}
         placeholderTextColor="#999"
       />
 
-      <Text style={styles.label}>Age *</Text>
+      <Text style={styles.label}>{t('addPatient.age')}</Text>
       <TextInput
         style={styles.input}
         value={age}
         onChangeText={setAge}
-        placeholder="Enter age"
+        placeholder={t('addPatient.enterAge')}
         keyboardType="numeric"
         placeholderTextColor="#999"
       />
 
-      <Text style={styles.label}>Sex *</Text>
+      <Text style={styles.label}>{t('addPatient.sex')}</Text>
       <View style={styles.sexContainer}>
-        <SexButton value="Male" label="Male" />
-        <SexButton value="Female" label="Female" />
-        <SexButton value="Other" label="Other" />
+        <SexButton value="Male" label={t('addPatient.male')} />
+        <SexButton value="Female" label={t('addPatient.female')} />
+        <SexButton value="Other" label={t('addPatient.other')} />
       </View>
 
-      <Text style={styles.label}>Phone (Optional)</Text>
+      <Text style={styles.label}>{t('addPatient.phone')}</Text>
       <TextInput
         style={styles.input}
         value={phone}
         onChangeText={setPhone}
-        placeholder="Enter phone number"
+        placeholder={t('addPatient.enterPhone')}
         keyboardType="phone-pad"
         placeholderTextColor="#999"
       />
 
-      <Text style={styles.label}>Medical History</Text>
+      <Text style={styles.label}>{t('addPatient.medicalHistory')}</Text>
       <TextInput
         style={[styles.input, styles.textArea]}
         value={medicalHistory}
         onChangeText={setMedicalHistory}
-        placeholder="Enter relevant medical history"
+        placeholder={t('addPatient.enterMedicalHistory')}
         multiline
         numberOfLines={4}
         textAlignVertical="top"
@@ -131,7 +133,7 @@ export default function AddPatientScreen({ navigation, route }) {
       />
 
       <TouchableOpacity style={styles.saveBtn} onPress={handleSavePatient}>
-        <Text style={styles.saveBtnText}>Save Patient</Text>
+        <Text style={styles.saveBtnText}>{t('addPatient.savePatient')}</Text>
       </TouchableOpacity>
     </ScrollView>
   );

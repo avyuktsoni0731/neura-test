@@ -1,6 +1,7 @@
 // src/screens/questions/q3.tsx
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/appNavigator";
 import { useQuizStore } from "../../store/quizStore";
@@ -10,6 +11,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Question3">;
 const DIGITS = [5, 8, 1, 3]; // clinically accurate backward recall set
 
 export default function Question3({ navigation }: Props) {
+  const { t } = useTranslation();
   const [answer, setAnswer] = useState("");
   const [showDigits, setShowDigits] = useState(true); // digits visible initially
   const setQuizAnswer = useQuizStore((s) => s.setAnswer);
@@ -27,13 +29,14 @@ export default function Question3({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.progress}>Question 3 / 5</Text>
+      <Text style={styles.progress}>
+        {t('questions.question')} 3 {t('questions.of')} 5
+      </Text>
 
-      <Text style={styles.title}>Digit Span — Backward Recall</Text>
+      <Text style={styles.title}>{t('questions.digitSpanTitle')}</Text>
 
       <Text style={styles.question}>
-        A sequence will appear briefly.  
-        After it disappears, re-enter it **in reverse order**.
+        {t('questions.digitSpanInstruction')}
       </Text>
 
       {/* Digits shown only for 3 seconds */}
@@ -44,7 +47,7 @@ export default function Question3({ navigation }: Props) {
       ) : (
         <>
           <TextInput
-            placeholder="Type the numbers backward (e.g., 3185)"
+            placeholder={t('questions.digitSpanPlaceholder')}
             value={answer}
             onChangeText={setAnswer}
             style={styles.input}
@@ -53,7 +56,7 @@ export default function Question3({ navigation }: Props) {
           />
 
           <TouchableOpacity style={styles.button} onPress={handleNext}>
-            <Text style={styles.buttonText}>Next</Text>
+            <Text style={styles.buttonText}>{t('common.next')}</Text>
           </TouchableOpacity>
         </>
       )}

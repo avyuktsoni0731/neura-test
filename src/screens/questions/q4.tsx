@@ -2,6 +2,7 @@
 // src/screens/questions/q4.tsx
 import React, { useState } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/appNavigator";
 import { useQuizStore } from "../../store/quizStore";
@@ -9,6 +10,7 @@ import { useQuizStore } from "../../store/quizStore";
 type Props = NativeStackScreenProps<RootStackParamList, "Question4">;
 
 export default function Question4({ navigation }: Props) {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const setQuizAnswer = useQuizStore((s) => s.setAnswer);
 
@@ -19,8 +21,10 @@ export default function Question4({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.progress}>Question 4 / 5</Text>
-      <Text style={styles.question}>4. Look at this picture. What is it?</Text>
+      <Text style={styles.progress}>
+        {t('questions.question')} 4 {t('questions.of')} 5
+      </Text>
+      <Text style={styles.question}>4. {t('questions.pictureQuestion')}</Text>
 
       <View style={styles.imageWrap}>
         {/* Put an image at src/assets/lion.png or change this path */}
@@ -28,7 +32,7 @@ export default function Question4({ navigation }: Props) {
       </View>
 
       <TextInput
-        placeholder="Type the name (e.g., Lion)"
+        placeholder={t('questions.picturePlaceholder')}
         value={name}
         onChangeText={setName}
         style={styles.input}
@@ -36,7 +40,7 @@ export default function Question4({ navigation }: Props) {
       />
 
       <TouchableOpacity style={styles.button} onPress={handleNext}>
-        <Text style={styles.buttonText}>Next</Text>
+        <Text style={styles.buttonText}>{t('common.next')}</Text>
       </TouchableOpacity>
     </View>
   );

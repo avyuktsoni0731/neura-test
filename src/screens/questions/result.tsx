@@ -5,6 +5,7 @@ import { useQuizStore } from "../../store/quizStore";
 import { useNavigation } from "@react-navigation/native";
 
 export default function TestResult() {
+  const { t } = useTranslation();
   const answers = useQuizStore((s) => s.answers);
   const resetQuiz = useQuizStore((s) => s.resetQuiz);
   const navigation:any = useNavigation();
@@ -27,37 +28,37 @@ export default function TestResult() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Cognitive Test Summary</Text>
+      <Text style={styles.title}>{t('result.title')}</Text>
 
       <View style={styles.card}>
-        <Text style={styles.section}>Date Orientation</Text>
+        <Text style={styles.section}>{t('result.dateOrientation')}</Text>
         <Text style={styles.ans}>
-          Entered: {answers.Question1?.entered || "-"}{"\n"}
-  Correct: {answers.Question1?.isCorrect ? "Yes" : "No"}
+          {t('result.entered')}: {answers.Question1?.entered || "-"}{"\n"}
+          {t('result.correct')}: {answers.Question1?.isCorrect ? t('result.yes') : t('result.no')}
         </Text>
 
-        <Text style={styles.section}>Word Recall (Recognition)</Text>
+        <Text style={styles.section}>{t('result.wordRecall')}</Text>
         <Text style={styles.ans}>
-          Correct: {correctReco} / 4
+          {t('result.correct')}: {correctReco} / 4
         </Text>
 
-        <Text style={styles.section}>Backward Digit Span</Text>
+        <Text style={styles.section}>{t('result.backwardDigitSpan')}</Text>
         <Text style={styles.ans}>
-          {correctDigit === 1 ? "Correct" : "Incorrect"}
+          {correctDigit === 1 ? t('result.correct') : t('result.incorrect')}
         </Text>
 
-        <Text style={styles.section}>Naming</Text>
+        <Text style={styles.section}>{t('result.naming')}</Text>
         <Text style={styles.ans}>
-          {namingCorrect === 1 ? "Correct" : "Incorrect"}
+          {namingCorrect === 1 ? t('result.correct') : t('result.incorrect')}
         </Text>
 
-        <Text style={styles.section}>Spatial Memory</Text>
+        <Text style={styles.section}>{t('result.spatialMemory')}</Text>
         <Text style={styles.ans}>
-          {spatialCorrect} / 4 correct positions
+          {spatialCorrect} / 4 {t('result.correctPositions')}
         </Text>
 
         <View style={styles.totalBox}>
-          <Text style={styles.totalScore}>Total Score: {totalScore} / 10</Text>
+          <Text style={styles.totalScore}>{t('result.totalScore')}: {totalScore} / 10</Text>
         </View>
       </View>
 
@@ -68,7 +69,7 @@ export default function TestResult() {
           navigation.navigate("MainTabs", {screen: "Home"});
         }}
       >
-        <Text style={styles.buttonText}>Return to Home</Text>
+        <Text style={styles.buttonText}>{t('result.returnToHome')}</Text>
       </TouchableOpacity>
     </ScrollView>
   );
