@@ -1,10 +1,79 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+} from "react-native";
+import { useTranslation } from 'react-i18next';
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../navigation/appNavigator";
+import { useQuizStore } from "../../store/quizStore";
+
+type Props = NativeStackScreenProps<RootStackParamList, "Question2">;
+
+const ORIGINAL_WORDS = ["Face", "Velvet", "Church", "Daisy"];
+
+export default function Question2({ navigation }: Props) {
+  const { t } = useTranslation();
+  const setQuizAnswer = useQuizStore((s) => s.setAnswer);
+
+  useEffect(() => {
+    // Store original words for later delayed recall scoring
+    if (useQuizStore.getState().answers.wordList.length === 0) {
+      setQuizAnswer("wordList", ORIGINAL_WORDS);
+    }
+
+    // Show words for 4 seconds, then navigate to delay timer
+    const timer = setTimeout(() => {
+      navigation.navigate("DelayTimer", {
+        nextScreen: "Question2Select",
+        durationMinutes: 10,
+        questionNumber: 2
+      });
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, [navigation, setQuizAnswer]);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.progress}>
+        {t('questions.question')} 2 {t('questions.of')} 5
+      </Text>
+
+      <Text style={styles.question}>{t('questions.memorizeWords')}</Text>
+
+      <View style={styles.wordBox}>
+        {ORIGINAL_WORDS.map((w) => (
+          <Text key={w} style={styles.wordItem}>{w}</Text>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 24, justifyContent: "center", backgroundColor: "#ffffff" },
+  progress: { textAlign: "center", color: "#6b7280", marginBottom: 12 },
+  question: { fontSize: 20, fontWeight: "700", textAlign: "center", marginBottom: 20 },
+  wordBox: { flexDirection: "row", justifyContent: "center", gap: 10, flexWrap: "wrap" },
+  wordItem: {
+    backgroundColor: "#f9fafb",
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 10,
+    fontSize: 18,
+    fontWeight: "700",
+  },
+});
+/*import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/appNavigator";
 import { useQuizStore } from "../../store/quizStore";
@@ -15,6 +84,7 @@ const ORIGINAL_WORDS = ["Face", "Velvet", "Church", "Daisy"];
 const DISTRACTORS = ["River", "Window", "Tiger", "Bottle"];
 
 export default function Question2({ navigation }: Props) {
+  const { t } = useTranslation();
   const [phase, setPhase] = useState<"show" | "recall">("show");
   const [choices, setChoices] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
@@ -28,10 +98,11 @@ export default function Question2({ navigation }: Props) {
     }
 
     const timer = setTimeout(() => {
-      const shuffled = [...ORIGINAL_WORDS, ...DISTRACTORS]
-        .sort(() => Math.random() - 0.5);
-      setChoices(shuffled);
-      setPhase("recall");
+      navigation.navigate("Question2Delay");
+      //const shuffled = [...ORIGINAL_WORDS, ...DISTRACTORS]
+      //  .sort(() => Math.random() - 0.5);
+      //setChoices(shuffled);
+      //setPhase("recall");
     }, 4000);
 
     return () => clearTimeout(timer);
@@ -47,16 +118,18 @@ export default function Question2({ navigation }: Props) {
 
   const handleNext = () => {
     setQuizAnswer("Question2", selected);
-    navigation.navigate("Question3");
+    navigation.navigate("Question2Delay");
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.progress}>Question 2 / 5</Text>
+      <Text style={styles.progress}>
+        {t('questions.question')} 2 {t('questions.of')} 5
+      </Text>
 
       {phase === "show" ? (
         <>
-          <Text style={styles.question}>Memorize the following words:</Text>
+          <Text style={styles.question}>{t('questions.memorizeWords')}</Text>
 
           <View style={styles.wordBox}>
             {ORIGINAL_WORDS.map((w) => (
@@ -66,7 +139,7 @@ export default function Question2({ navigation }: Props) {
         </>
       ) : (
         <>
-          <Text style={styles.question}>Select the 4 words you saw earlier:</Text>
+          <Text style={styles.question}>{t('questions.selectWords')}</Text>
 
           <View style={styles.choiceBox}>
             {choices.map((w) => (
@@ -95,7 +168,7 @@ export default function Question2({ navigation }: Props) {
             disabled={selected.length !== 4}
             onPress={handleNext}
           >
-            <Text style={styles.buttonText}>Next</Text>
+            <Text style={styles.buttonText}>{t('common.next')}</Text>
           </TouchableOpacity>
         </>
       )}

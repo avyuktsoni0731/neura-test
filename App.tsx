@@ -7,6 +7,7 @@
 
 import './app.css';
 import './nativewind-env.d.ts';
+import './src/i18n'; // Initialize i18n
 import { StatusBar, useColorScheme, View } from 'react-native';
 import {
   SafeAreaProvider,
@@ -16,17 +17,25 @@ import React, { useEffect, useState } from 'react';
 import SplashScreen from './components/SplashScreen';
 import AppNavigator from './src/navigation/appNavigator.tsx';
 import { NavigationContainer } from '@react-navigation/native';
+import { loadSavedLanguage } from './src/i18n';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    const initializeApp = async () => {
+      // Load saved language preference
+      await loadSavedLanguage();
+      
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
 
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    };
+
+    initializeApp();
   }, []);
 
   if (isLoading) {

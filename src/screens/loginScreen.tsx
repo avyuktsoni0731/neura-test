@@ -8,11 +8,14 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store/appstore.js';
+import { changeLanguage } from '../i18n';
 
 console.log('LoginScreen store:', useAppStore);
 
 export default function LoginScreen({ navigation }) {
+  const { t } = useTranslation();
   const {
     practitioner,
     loadSavedPractitioner,
@@ -45,31 +48,31 @@ export default function LoginScreen({ navigation }) {
 
   const handleReturningUserLogin = async () => {
     if (loginPin.length !== 4) {
-      return Alert.alert('Error', 'Enter a valid 4-digit PIN');
+      return Alert.alert(t('common.error'), t('login.errorValidPinLength'));
     }
 
     const success = await loginWithPin(loginPin);
     if (success) {
       navigation.replace('MainTabs');
     } else {
-      Alert.alert('Error', 'Incorrect PIN');
+      Alert.alert(t('common.error'), t('login.errorIncorrectPin'));
     }
   };
 
   const handleNewUserRegistration = async () => {
     // Validation
     if (name.trim() === '')
-      return Alert.alert('Error', 'Please enter your name');
+      return Alert.alert(t('common.error'), t('login.errorEnterName'));
     if (mobile.trim() === '')
-      return Alert.alert('Error', 'Please enter your mobile number');
+      return Alert.alert(t('common.error'), t('login.errorEnterMobile'));
     if (role.trim() === '')
-      return Alert.alert('Error', 'Please select your role');
+      return Alert.alert(t('common.error'), t('login.errorSelectRole'));
     if (language.trim() === '')
-      return Alert.alert('Error', 'Please select your preferred language');
+      return Alert.alert(t('common.error'), t('login.errorSelectLanguage'));
     if (pin.trim() === '' || pin.length !== 4)
-      return Alert.alert('Error', 'Enter a valid 4-digit PIN');
+      return Alert.alert(t('common.error'), t('login.errorValidPin'));
     if (!consentScreening || !consentPatient || !consentData)
-      return Alert.alert('Error', 'Please agree to all consent checkboxes');
+      return Alert.alert(t('common.error'), t('login.errorAllConsents'));
 
     // Check if user with same mobile and PIN already exists
     if (practitioner.mobile === mobile && practitioner.pin === pin) {
@@ -96,6 +99,21 @@ export default function LoginScreen({ navigation }) {
     };
 
     await savePractitionerAndLogin(newPractitioner);
+    // Set language if practitioner has a preferred language
+    if (language) {
+      const languageMap: { [key: string]: string } = {
+        'English': 'en',
+        'Hindi': 'hi',
+        'Tamil': 'ta',
+        'Malayalam': 'ml',
+        'en': 'en',
+        'hi': 'hi',
+        'ta': 'ta',
+        'ml': 'ml',
+      };
+      const langCode = languageMap[language] || 'en';
+      await changeLanguage(langCode);
+    }
     navigation.replace('MainTabs');
   };
 
@@ -106,11 +124,11 @@ export default function LoginScreen({ navigation }) {
   if (isReturningUser) {
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Welcome Back!</Text>
-        <Text style={styles.subtitle}>Hello, {practitioner.name}</Text>
+        <Text style={styles.title}>{t('login.welcomeBack')}</Text>
+        <Text style={styles.subtitle}>{t('login.hello', { name: practitioner.name })}</Text>
 
         <TextInput
-          placeholder="Enter your 4-digit PIN"
+          placeholder={t('login.enterPin')}
           style={styles.input}
           value={loginPin}
           onChangeText={setLoginPin}
@@ -124,14 +142,14 @@ export default function LoginScreen({ navigation }) {
           style={styles.button}
           onPress={handleReturningUserLogin}
         >
-          <Text style={styles.buttonText}>Login</Text>
+          <Text style={styles.buttonText}>{t('login.login')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.button, { backgroundColor: '#6c757d', marginTop: 10 }]}
           onPress={handleCreateNewAccount}
         >
-          <Text style={styles.buttonText}>Create New Account</Text>
+          <Text style={styles.buttonText}>{t('login.createNewAccount')}</Text>
         </TouchableOpacity>
       </ScrollView>
     );
@@ -140,18 +158,18 @@ export default function LoginScreen({ navigation }) {
   // Existing new user form...
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Practitioner Registration</Text>
+      <Text style={styles.title}>{t('login.practitionerRegistration')}</Text>
 
       {/* Existing form fields... */}
       <TextInput
-        placeholder="Full Name"
+        placeholder={t('login.fullName')}
         style={styles.input}
         placeholderTextColor="#999"
         value={name}
         onChangeText={setName}
       />
       <TextInput
-        placeholder="Mobile Number"
+        placeholder={t('login.mobileNumber')}
         style={styles.input}
         keyboardType="phone-pad"
         placeholderTextColor="#999"
@@ -159,21 +177,21 @@ export default function LoginScreen({ navigation }) {
         onChangeText={setMobile}
       />
       <TextInput
-        placeholder="Role (e.g. Nurse)"
+        placeholder={t('login.role')}
         style={styles.input}
         placeholderTextColor="#999"
         value={role}
         onChangeText={setRole}
       />
       <TextInput
-        placeholder="Preferred Language"
+        placeholder={t('login.preferredLanguage')}
         style={styles.input}
         placeholderTextColor="#999"
         value={language}
         onChangeText={setLanguage}
       />
       <TextInput
-        placeholder="4-digit PIN"
+        placeholder={t('login.pin')}
         style={styles.input}
         value={pin}
         onChangeText={setPin}
@@ -189,8 +207,7 @@ export default function LoginScreen({ navigation }) {
           style={styles.checkbox}
         >
           <Text>
-            {consentScreening ? '✅' : '⬜'} I understand this is for screening
-            only
+            {consentScreening ? '✅' : '⬜'} {t('login.consentScreening')}
           </Text>
         </TouchableOpacity>
 
@@ -199,8 +216,7 @@ export default function LoginScreen({ navigation }) {
           style={styles.checkbox}
         >
           <Text>
-            {consentPatient ? '✅' : '⬜'} I will obtain patient consent before
-            screening
+            {consentPatient ? '✅' : '⬜'} {t('login.consentPatient')}
           </Text>
         </TouchableOpacity>
 
@@ -209,7 +225,7 @@ export default function LoginScreen({ navigation }) {
           style={styles.checkbox}
         >
           <Text>
-            {consentData ? '✅' : '⬜'} I will handle patient data responsibly
+            {consentData ? '✅' : '⬜'} {t('login.consentData')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -218,7 +234,7 @@ export default function LoginScreen({ navigation }) {
         style={styles.button}
         onPress={handleNewUserRegistration}
       >
-        <Text style={styles.buttonText}>Register & Login</Text>
+        <Text style={styles.buttonText}>{t('login.registerAndLogin')}</Text>
       </TouchableOpacity>
 
       {/* <View style={{ padding: 20 }}>

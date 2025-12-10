@@ -1,6 +1,87 @@
-// src/screens/questions/q3.tsx
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { useTranslation } from 'react-i18next';
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../navigation/appNavigator";
+
+type Props = NativeStackScreenProps<RootStackParamList, "Question3">;
+
+// Example: If Q3 is about remembering a sequence
+const SEQUENCE_ITEMS = ["Red", "Blue", "Green", "Yellow"];
+
+export default function Question3({ navigation }: Props) {
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    // Show content for a few seconds, then go to timer
+    const timer = setTimeout(() => {
+      navigation.navigate("DelayTimer", {
+        nextScreen: "Question3Select",
+        durationMinutes: 10,
+        questionNumber: 3
+      });
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, [navigation]);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.progress}>
+        {t('questions.question')} 3 {t('questions.of')} 5
+      </Text>
+
+      <Text style={styles.question}>
+        {t('questions.memorizeSequence') || 'Memorize this sequence:'}
+      </Text>
+
+      <View style={styles.itemBox}>
+        {SEQUENCE_ITEMS.map((item, index) => (
+          <Text key={index} style={styles.item}>
+            {index + 1}. {item}
+          </Text>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { 
+    flex: 1, 
+    padding: 24, 
+    justifyContent: "center", 
+    backgroundColor: "#ffffff" 
+  },
+  progress: { 
+    textAlign: "center", 
+    color: "#6b7280", 
+    marginBottom: 12 
+  },
+  question: { 
+    fontSize: 20, 
+    fontWeight: "700", 
+    textAlign: "center", 
+    marginBottom: 20 
+  },
+  itemBox: { 
+    alignItems: "center", 
+    gap: 10 
+  },
+  item: {
+    backgroundColor: "#f9fafb",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 10,
+    fontSize: 18,
+    fontWeight: "600",
+    width: "80%",
+    textAlign: "center",
+  },
+});
+/*import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/appNavigator";
 import { useQuizStore } from "../../store/quizStore";
@@ -10,6 +91,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Question3">;
 const DIGITS = [5, 8, 1, 3]; // clinically accurate backward recall set
 
 export default function Question3({ navigation }: Props) {
+  const { t } = useTranslation();
   const [answer, setAnswer] = useState("");
   const [showDigits, setShowDigits] = useState(true); // digits visible initially
   const setQuizAnswer = useQuizStore((s) => s.setAnswer);
@@ -27,16 +109,16 @@ export default function Question3({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.progress}>Question 3 / 5</Text>
-
-      <Text style={styles.title}>Digit Span — Backward Recall</Text>
-
-      <Text style={styles.question}>
-        A sequence will appear briefly.  
-        After it disappears, re-enter it **in reverse order**.
+      <Text style={styles.progress}>
+        {t('questions.question')} 3 {t('questions.of')} 5
       </Text>
 
-      {/* Digits shown only for 3 seconds */}
+      <Text style={styles.title}>{t('questions.digitSpanTitle')}</Text>
+
+      <Text style={styles.question}>
+        {t('questions.digitSpanInstruction')}
+      </Text>
+
       {showDigits ? (
         <View style={styles.digitBox}>
           <Text style={styles.digits}>{DIGITS.join("   ")}</Text>
@@ -44,7 +126,7 @@ export default function Question3({ navigation }: Props) {
       ) : (
         <>
           <TextInput
-            placeholder="Type the numbers backward (e.g., 3185)"
+            placeholder={t('questions.digitSpanPlaceholder')}
             value={answer}
             onChangeText={setAnswer}
             style={styles.input}
@@ -53,7 +135,7 @@ export default function Question3({ navigation }: Props) {
           />
 
           <TouchableOpacity style={styles.button} onPress={handleNext}>
-            <Text style={styles.buttonText}>Next</Text>
+            <Text style={styles.buttonText}>{t('common.next')}</Text>
           </TouchableOpacity>
         </>
       )}
@@ -106,6 +188,7 @@ const styles = StyleSheet.create({
   buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
 });
 
+*/
 // src/screens/questions/q3.tsx
 /*
 import React, { useState } from "react";

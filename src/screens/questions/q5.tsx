@@ -1,6 +1,7 @@
 // src/screens/questions/q5.tsx
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/appNavigator";
 import { useQuizStore } from "../../store/quizStore";
@@ -11,10 +12,8 @@ const GRID_SIZE = 3; // 3x3 grid
 const TOTAL_POINTS = 4; // 4 circles shown
 
 export default function Question5({ navigation }: Props) {
+  const { t } = useTranslation();
   const [shownPositions, setShownPositions] = useState<number[]>([]);
-  const [selectedPositions, setSelectedPositions] = useState<number[]>([]);
-  const [step, setStep] = useState<"show" | "recall">("show");
-
   const setQuizAnswer = useQuizStore((s) => s.setAnswer);
 
   useEffect(() => {
@@ -29,77 +28,90 @@ export default function Question5({ navigation }: Props) {
     }
     setShownPositions(positions);
 
+    // Store the positions for later scoring
+    setQuizAnswer("Question5", {...useQuizStore.getState().answers.Question5, shown: positions});
+
+    // Show for 3 seconds, then navigate to timer
     setTimeout(() => {
-      setStep("recall");
-    }, 2000); // show for 2 seconds
-  };
-
-  const handleSelect = (index: number) => {
-    if (step === "recall") {
-      setSelectedPositions((prev) =>
-        prev.includes(index) ? prev.filter((x) => x !== index) : [...prev, index]
-      );
-    }
-  };
-
-  const handleFinish = () => {
-    const correct = selectedPositions.filter((pos) => shownPositions.includes(pos)).length;
-
-    setQuizAnswer("Question5", {
-      shown: shownPositions,
-      selected: selectedPositions,
-      correctCount: correct,
-    });
-
-    navigation.navigate("TestResult");
+      navigation.navigate("DelayTimer", {
+        nextScreen: "Question5Select",
+        durationMinutes: 10,
+        questionNumber: 5
+      });
+    }, 3000);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.progress}>Question 5 / 5</Text>
+      <Text style={styles.progress}>
+        {t('questions.question')} 5 {t('questions.of')} 5
+      </Text>
 
       <Text style={styles.question}>
-        5. Remember the positions of the circles.
+        {t('questions.spatialMemory') || 'Memorize the positions of the circles'}
+      </Text>
+
+      <Text style={styles.instruction}>
+        {t('questions.spatialInstruction') || 'Remember where the blue circles are located'}
       </Text>
 
       <View style={styles.grid}>
         {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, index) => {
-          const isCircleVisible = step === "show" && shownPositions.includes(index);
-          const isSelected = step === "recall" && selectedPositions.includes(index);
+          const isCircleVisible = shownPositions.includes(index);
 
           return (
-            <TouchableOpacity
+            <View
               key={index}
-              onPress={() => handleSelect(index)}
               style={[
                 styles.cell,
                 isCircleVisible && styles.circle,
-                isSelected && styles.selected,
               ]}
             />
           );
         })}
       </View>
-
-      {step === "recall" && (
-        <TouchableOpacity style={styles.button} onPress={handleFinish}>
-          <Text style={styles.buttonText}>Finish Test</Text>
-        </TouchableOpacity>
-      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, justifyContent: "center", backgroundColor: "#f0f9ff" },
-  progress: { textAlign: "center", marginBottom: 10, color: "#6b7280" },
-  question: { fontSize: 20, fontWeight: "700", textAlign: "center", marginBottom: 20 },
+  container: { 
+    flex: 1, 
+    padding: 24, 
+    justifyContent: "center", 
+    backgroundColor: "#f0f9ff" 
+  },
+  progress: { 
+    textAlign: "center", 
+    marginBottom: 10, 
+    color: "#6b7280" 
+  },
+  question: { 
+    fontSize: 20, 
+    fontWeight: "700", 
+    textAlign: "center", 
+    marginBottom: 12 
+  },
+  instruction: {
+    fontSize: 16,
+    color: "#6b7280",
+    textAlign: "center",
+    marginBottom: 24,
+  },
   grid: {
     width: 300,
     height: 300,
     alignSelf: "center",
     flexDirection: "row",
     flexWrap: "wrap",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   cell: {
     width: 100,
@@ -108,21 +120,11 @@ const styles = StyleSheet.create({
     borderColor: "#d1d5db",
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "#fff",
   },
   circle: {
     backgroundColor: "#60a5fa",
     borderRadius: 50,
+    margin: 10,
   },
-  selected: {
-    backgroundColor: "#2563eb",
-  },
-  button: {
-    marginTop: 26,
-    backgroundColor: "#2563eb",
-    paddingVertical: 15,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  buttonText: { color: "#fff", fontWeight: "600", fontSize: 16 },
 });
-

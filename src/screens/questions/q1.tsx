@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/appNavigator"; 
 import { useQuizStore } from '../../store/quizStore';
@@ -7,7 +9,141 @@ import { useQuizStore } from '../../store/quizStore';
 type Props = NativeStackScreenProps<RootStackParamList, "Question1">;
 
 export default function Question1({ navigation }: Props) {
+  const { t } = useTranslation();
+
+  const [showPicker, setShowPicker] = useState(false);
+  const [dob, setDob] = useState<Date | null>(null);
+
+  const setQuizAnswer = useQuizStore((state) => state.setAnswer);
+
+  const onDateChange = (event: any, selectedDate?: Date) => {
+    setShowPicker(false);
+    if (selectedDate) {
+      setDob(selectedDate);
+    }
+  };
+
+  const handleNext = () => {
+    if (!dob) return;
+
+    const formatted = dob.toISOString().split("T")[0]; 
+    setQuizAnswer("Question1", {
+      entered: formatted,
+      correctDate: "",
+      isCorrect: true,
+    });
+
+    navigation.navigate("Question2");
+  };
+
+  return (
+    <View style={styles.container}>
+
+      <Text style={styles.progress}>
+        {t('questions.question')} 1 {t('questions.of')} 5
+      </Text>
+
+      <Text style={styles.questionText}>
+        {t('questions.enterDob') || "Select Patient's Date of Birth"}
+      </Text>
+
+      <TouchableOpacity 
+        style={styles.dateBox}
+        onPress={() => setShowPicker(true)}
+      >
+        <Text style={styles.dateText}>
+          {dob ? dob.toDateString() : t('questions.selectDob') || "Select Date"}
+        </Text>
+      </TouchableOpacity>
+
+      {showPicker && (
+        <DateTimePicker
+          value={dob || new Date(1990, 0, 1)}
+          mode="date"
+          display={Platform.OS === "ios" ? "spinner" : "calendar"}
+          onChange={onDateChange}
+          maximumDate={new Date()}
+        />
+      )}
+
+      <TouchableOpacity 
+        style={[styles.button, !dob && styles.buttonDisabled]}
+        disabled={!dob}
+        onPress={handleNext}
+      >
+        <Text style={styles.buttonText}>{t('common.next')}</Text>
+      </TouchableOpacity>
+
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: "#fafafa",
+    justifyContent: "center",
+  },
+  progress: {
+    textAlign: "center",
+    color: "#7a7a7a",
+    marginBottom: 12,
+    fontSize: 16,
+  },
+  questionText: {
+    fontSize: 22,
+    fontWeight: "700",
+    marginBottom: 24,
+    color: "#222",
+    textAlign: "center",
+  },
+  dateBox: {
+    padding: 16,
+    borderWidth: 1.5,
+    borderColor: "#d0d0d0",
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    marginBottom: 28,
+  },
+  dateText: {
+    fontSize: 18,
+    color: "#333",
+    textAlign: "center",
+  },
+  button: {
+    backgroundColor: "brown",
+    paddingVertical: 16,
+    borderRadius: 14,
+    alignItems: "center",
+  },
+  buttonDisabled: {
+    opacity: 0.4,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+  },
+});
+
+/*import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../navigation/appNavigator"; 
+import { useQuizStore } from '../../store/quizStore';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
+type Props = NativeStackScreenProps<RootStackParamList, "Question1">;
+
+export default function Question1({ navigation }: Props) {
+  const { t } = useTranslation();
   const [answer, setAnswer] = useState("");
+
+  const [showPicker, setShowPicker] = useState(false);
+  const [dob, setDob] = useState<Date | null>(null);
+
   const setQuizAnswer = useQuizStore((state) => state.setAnswer);
 
   const formatDate = (text: string) => {
@@ -33,15 +169,17 @@ export default function Question1({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.progress}>Question 1 / 5</Text>
+      <Text style={styles.progress}>
+        {t('questions.question')} 1 {t('questions.of')} 5
+      </Text>
 
       <Text style={styles.questionText}>
-        1. Enter today's date (DD-MM-YYYY)
+        1. {t('questions.enterDate')}
       </Text>
 
       <TextInput
         keyboardType="numeric"
-        placeholder="DD-MM-YYYY"
+        placeholder={t('questions.datePlaceholder')}
         placeholderTextColor="#aaa"
         value={answer}
         maxLength={10}
@@ -54,7 +192,7 @@ export default function Question1({ navigation }: Props) {
         disabled={answer.length !== 10}
         onPress={handleNext}
       >
-        <Text style={styles.buttonText}>Next</Text>
+        <Text style={styles.buttonText}>{t('common.next')}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -107,7 +245,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-
+*/
 /*
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';

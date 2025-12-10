@@ -1,62 +1,93 @@
 
-// src/screens/questions/q4.tsx
-import React, { useState } from "react";
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useEffect } from "react";
+import { View, Text, Image, StyleSheet } from "react-native";
+import { useTranslation } from 'react-i18next';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/appNavigator";
-import { useQuizStore } from "../../store/quizStore";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Question4">;
 
 export default function Question4({ navigation }: Props) {
-  const [name, setName] = useState("");
-  const setQuizAnswer = useQuizStore((s) => s.setAnswer);
+  const { t } = useTranslation();
 
-  const handleNext = () => {
-    setQuizAnswer("Question4", name.trim());
-    navigation.navigate("Question5");
-  };
+  useEffect(() => {
+    // Show image for 5 seconds, then navigate to timer
+    const timer = setTimeout(() => {
+      navigation.navigate("DelayTimer", {
+        nextScreen: "Question4Select",
+        durationMinutes: 10,
+        questionNumber: 4
+      });
+    }, 5000); // 5 seconds to memorize the image
+
+    return () => clearTimeout(timer);
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.progress}>Question 4 / 5</Text>
-      <Text style={styles.question}>4. Look at this picture. What is it?</Text>
+      <Text style={styles.progress}>
+        {t('questions.question')} 4 {t('questions.of')} 5
+      </Text>
+      
+      <Text style={styles.question}>
+        {t('questions.memorizePicture') || 'Memorize this picture:'}
+      </Text>
 
       <View style={styles.imageWrap}>
-        {/* Put an image at src/assets/lion.png or change this path */}
-        <Image source={require("../../../assets/lion.png")} style={styles.image} resizeMode="contain" />
+        <Image 
+          source={require("../../../assets/lion.png")} 
+          style={styles.image} 
+          resizeMode="contain" 
+        />
       </View>
 
-      <TextInput
-        placeholder="Type the name"
-        value={name}
-        onChangeText={setName}
-        style={styles.input}
-        placeholderTextColor="#888"
-      />
-
-      <TouchableOpacity style={styles.button} onPress={handleNext}>
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
+      <Text style={styles.hint}>
+        {t('questions.pictureHint') || 'You will be asked about this later'}
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, backgroundColor: "#fffaf0", justifyContent: "center" },
-  progress: { textAlign: "center", color: "#6b7280", marginBottom: 12 },
-  question: { fontSize: 20, fontWeight: "700", textAlign: "center", marginBottom: 16 },
-  imageWrap: { alignItems: "center", marginBottom: 16 },
-  image: { width: 200, height: 140, borderRadius: 10 },
-  input: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 14,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    marginBottom: 26,
+  container: { 
+    flex: 1, 
+    padding: 24, 
+    backgroundColor: "#fffaf0", 
+    justifyContent: "center" 
   },
-  button: { backgroundColor: "#2563eb", paddingVertical: 14, borderRadius: 12, alignItems: "center" },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
+  progress: { 
+    textAlign: "center", 
+    color: "#6b7280", 
+    marginBottom: 12 
+  },
+  question: { 
+    fontSize: 20, 
+    fontWeight: "700", 
+    textAlign: "center", 
+    marginBottom: 30 
+  },
+  imageWrap: { 
+    alignItems: "center", 
+    marginBottom: 20,
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  image: { 
+    width: 250, 
+    height: 200, 
+    borderRadius: 10 
+  },
+  hint: {
+    textAlign: "center",
+    color: "#6b7280",
+    fontSize: 14,
+    fontStyle: "italic",
+    marginTop: 10,
+  },
 });

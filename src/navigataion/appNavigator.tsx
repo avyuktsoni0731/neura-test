@@ -5,7 +5,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useAppStore } from '../store/appstore.js';
 
 import LoginScreen from '../screens/loginScreen.tsx'; // Update to .tsx
-import BottomTabs from './navbar.tsx';
+import BottomTabs from '../navigation/appNavigator.tsx';
 import AddPatientScreen from '../screens/addPatient.tsx';
 import PosturalTremorScreen from '../screens/PosturalTremor.tsx';
 import TimedUpAndGoScreen from '../screens/TimedUpAndGo.tsx';

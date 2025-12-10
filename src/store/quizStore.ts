@@ -1,6 +1,5 @@
 import { create } from "zustand";
 
-// --- Types ---
 export type Question5Data = {
   shown: number[];        // which positions were displayed
   selected: number[];     // which positions user tapped
@@ -22,6 +21,7 @@ export type QuizAnswers = {
   Question5: Question5Data;
   reverseRecall?: string | null;
 };
+
 
 type Store = {
   answers: QuizAnswers;
