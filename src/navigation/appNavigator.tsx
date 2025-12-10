@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAppStore } from '../store/appstore.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavigationContainer } from '@react-navigation/native';
 
 import LoginScreen from '../screens/loginScreen.tsx';
 import BottomTabs from './navbar.tsx';
@@ -15,6 +16,7 @@ import TestResult from '../screens/questions/result.tsx';
 import HomeScreen from '../screens/home.tsx';
 import PosturalTremorScreen from '../screens/PosturalTremor.tsx';
 import TimedUpAndGoScreen from '../screens/TimedUpAndGo.tsx';
+import OnboardingContainer from '../screens/onboarding/OnboardingContainer.tsx';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -24,12 +26,13 @@ export type RootStackParamList = {
   Screening: { patient: any };
   PosturalTremor: { patient: any };
   TimedUpAndGo: { patient: any };
-  Question1: undefined;
-  Question2: undefined;
-  Question3: undefined;
-  Question4: undefined;
-  Question5: undefined;
-  TestResult: undefined;
+  Question1: { patient: any };
+  Question2: { patient: any };
+  Question3: { patient: any };
+  Question4: { patient: any };
+  Question5: { patient: any };
+  TestResult: { patient: any };
+  Onboarding: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -37,33 +40,64 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function AppNavigator() {
   const { isLoggedIn, loadSavedPractitioner } = useAppStore();
   const [isLoading, setIsLoading] = useState(true);
+  const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
-    loadSavedPractitioner().finally(() => setIsLoading(false));
+    const initializeApp = async () => {
+      await loadSavedPractitioner();
+
+      const onboardingComplete = await AsyncStorage.getItem(
+        'onboarding_complete',
+      );
+      const hasSeenOnboarding = onboardingComplete === 'true';
+      setHasSeenOnboarding(hasSeenOnboarding);
+      setShowOnboarding(!hasSeenOnboarding);
+
+      setIsLoading(false);
+    };
+
+    initializeApp();
   }, []);
+
+  const handleOnboardingComplete = async () => {
+    await AsyncStorage.setItem('onboarding_complete', 'true');
+    setHasSeenOnboarding(true);
+    setShowOnboarding(false);
+  };
 
   if (isLoading) {
     return null;
   }
 
-  return (
-    <Stack.Navigator
-      screenOptions={{ headerShown: false }}
-      initialRouteName={isLoggedIn ? 'MainTabs' : 'Login'} // start where you want
-    >
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="MainTabs" component={BottomTabs} />
-      <Stack.Screen name="AddPatient" component={AddPatientScreen} />
-      <Stack.Screen name="PosturalTremor" component={PosturalTremorScreen} />
-      <Stack.Screen name="TimedUpAndGo" component={TimedUpAndGoScreen} />
+  if (showOnboarding) {
+    return (
+      <NavigationContainer>
+        <OnboardingContainer onComplete={handleOnboardingComplete} />
+      </NavigationContainer>
+    );
+  }
 
-      <Stack.Screen name="Question1" component={Question1} />
-      <Stack.Screen name="Question2" component={Question2} />
-      <Stack.Screen name="Question3" component={Question3} />
-      <Stack.Screen name="Question4" component={Question4} />
-      <Stack.Screen name="Question5" component={Question5} />
-      <Stack.Screen name="TestResult" component={TestResult} />
-    </Stack.Navigator>
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName={isLoggedIn ? 'MainTabs' : 'Login'}
+      >
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="MainTabs" component={BottomTabs} />
+        <Stack.Screen name="AddPatient" component={AddPatientScreen} />
+        <Stack.Screen name="PosturalTremor" component={PosturalTremorScreen} />
+        <Stack.Screen name="TimedUpAndGo" component={TimedUpAndGoScreen} />
+
+        <Stack.Screen name="Question1" component={Question1} />
+        <Stack.Screen name="Question2" component={Question2} />
+        <Stack.Screen name="Question3" component={Question3} />
+        <Stack.Screen name="Question4" component={Question4} />
+        <Stack.Screen name="Question5" component={Question5} />
+        <Stack.Screen name="TestResult" component={TestResult} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }

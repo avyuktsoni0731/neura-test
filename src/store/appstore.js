@@ -130,6 +130,36 @@ export const useAppStore = create((set, get) => ({
     }
   },
 
+  // Save quiz results for a patient
+  saveQuizResults: async (patientId, quizResults) => {
+    const { practitioner, patients } = get();
+    try {
+      const updatedPatients = patients.map(patient => {
+        if (patient.id === patientId) {
+          return {
+            ...patient,
+            quizResults: [
+              ...(patient.quizResults || []),
+              {
+                ...quizResults,
+                timestamp: Date.now(),
+              },
+            ],
+          };
+        }
+        return patient;
+      });
+
+      await AsyncStorage.setItem(
+        `patients_${practitioner.mobile}`,
+        JSON.stringify(updatedPatients),
+      );
+      set({ patients: updatedPatients });
+    } catch (error) {
+      console.error('Failed to save quiz results:', error);
+    }
+  },
+
   // Existing methods...
   setPractitionerField: (field, value) =>
     set(state => ({

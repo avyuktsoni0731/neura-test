@@ -116,7 +116,8 @@
     "spatialMemory": "स्थानिक स्मृति",
     "correctPositions": "सही स्थितियाँ",
     "totalScore": "कुल स्कोर",
-    "returnToHome": "होम पर वापस जाएं"
+    "returnToHome": "होम पर वापस जाएं",
+    "startMotorTest": "मोटर टेस्ट शुरू करें"
   },
   "newSession": {
     "title": "नया सत्र",

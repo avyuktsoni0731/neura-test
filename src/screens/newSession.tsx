@@ -34,13 +34,18 @@ export default function NewSessionScreen({ navigation }) {
     navigation.navigate('AddPatient', { onPatientAdded: loadPatients });
   };
 
-  const handleStartScreening = () => {
+  const handleMotorScreening = () => {
+    // Start screening session
+    navigation.navigate('PosturalTremor', { patient: selectedPatient });
+  };
+
+  const handleCognitiveScreening = () => {
     if (!selectedPatient) {
       Alert.alert(t('common.error'), t('newSession.selectPatientFirst'));
       return;
     }
-    // Start screening session
-    navigation.navigate('PosturalTremor', { patient: selectedPatient });
+    // Pass patient data through navigation
+    navigation.navigate('Question1', { patient: selectedPatient });
   };
 
   const handleDeletePatient = (patientId: string, patientName: string) => {
@@ -104,15 +109,15 @@ export default function NewSessionScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>{t('newSession.title')}</Text>
-      <Text style={styles.subText}>
-        {t('newSession.subtitle')}
-      </Text>
+      <Text style={styles.subText}>{t('newSession.subtitle')}</Text>
 
       <TouchableOpacity style={styles.addBtn} onPress={handleAddPatient}>
         <Text style={styles.addBtnText}>{t('newSession.addNewPatient')}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.sectionTitle}>{t('newSession.existingPatients')}</Text>
+      <Text style={styles.sectionTitle}>
+        {t('newSession.existingPatients')}
+      </Text>
 
       <View
         className="flex-col justify-between gap-4"
@@ -126,16 +131,20 @@ export default function NewSessionScreen({ navigation }) {
           contentContainerStyle={styles.patientListContent}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
-            <Text style={styles.emptyText}>{t('newSession.noPatientsYet')}</Text>
+            <Text style={styles.emptyText}>
+              {t('newSession.noPatientsYet')}
+            </Text>
           }
         />
 
         {selectedPatient && (
           <TouchableOpacity
             style={styles.startBtn}
-            onPress={handleStartScreening}
+            onPress={handleCognitiveScreening}
           >
-            <Text style={styles.startBtnText}>{t('newSession.startScreening')}</Text>
+            <Text style={styles.startBtnText}>
+              {t('newSession.startScreening')}
+            </Text>
           </TouchableOpacity>
         )}
       </View>

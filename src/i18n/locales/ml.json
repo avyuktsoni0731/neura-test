@@ -116,7 +116,8 @@
     "spatialMemory": "സ്പേഷ്യൽ മെമ്മറി",
     "correctPositions": "ശരിയായ സ്ഥാനങ്ങൾ",
     "totalScore": "മൊത്തം സ്കോർ",
-    "returnToHome": "ഹോമിലേക്ക് മടങ്ങുക"
+    "returnToHome": "ഹോമിലേക്ക് മടങ്ങുക",
+    "startMotorTest": "മോട്ടർ ടെസ്റ്റ് ആരംഭിക്കുക"
   },
   "newSession": {
     "title": "പുതിയ സെഷൻ",
