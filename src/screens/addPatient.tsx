@@ -7,10 +7,11 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  Modal,
+  FlatList,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store/appstore.js';
-import { Picker } from '@react-native-picker/picker';
 
 export default function AddPatientScreen({ navigation, route }) {
   const { t } = useTranslation();
@@ -26,6 +27,7 @@ export default function AddPatientScreen({ navigation, route }) {
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
+  const [showBloodGroupModal, setShowBloodGroupModal] = useState(false);
 
   const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
@@ -165,18 +167,17 @@ export default function AddPatientScreen({ navigation, route }) {
       </View>
 
       <Text style={styles.label}>Blood Group *</Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={bloodGroup}
-          onValueChange={setBloodGroup}
-          style={styles.picker}
+      <TouchableOpacity
+        style={styles.dropdownButton}
+        onPress={() => setShowBloodGroupModal(true)}
+      >
+        <Text
+          style={[styles.dropdownText, !bloodGroup && styles.placeholderText]}
         >
-          <Picker.Item label="Select Blood Group" value="" />
-          {bloodGroups.map(group => (
-            <Picker.Item key={group} label={group} value={group} />
-          ))}
-        </Picker>
-      </View>
+          {bloodGroup || 'Select Blood Group'}
+        </Text>
+        <Text style={styles.dropdownArrow}>▼</Text>
+      </TouchableOpacity>
 
       <Text style={styles.label}>Weight (kg) *</Text>
       <TextInput
@@ -223,6 +224,40 @@ export default function AddPatientScreen({ navigation, route }) {
       <TouchableOpacity style={styles.saveBtn} onPress={handleSavePatient}>
         <Text style={styles.saveBtnText}>{t('addPatient.savePatient')}</Text>
       </TouchableOpacity>
+
+      <Modal
+        visible={showBloodGroupModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowBloodGroupModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Select Blood Group</Text>
+            <FlatList
+              data={bloodGroups}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.bloodGroupItem}
+                  onPress={() => {
+                    setBloodGroup(item);
+                    setShowBloodGroupModal(false);
+                  }}
+                >
+                  <Text style={styles.bloodGroupText}>{item}</Text>
+                </TouchableOpacity>
+              )}
+              keyExtractor={item => item}
+            />
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setShowBloodGroupModal(false)}
+            >
+              <Text style={styles.modalCloseText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -296,14 +331,67 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
   },
-  pickerContainer: {
+  dropdownButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 12,
     backgroundColor: '#f8f9fa',
+    paddingHorizontal: 15,
+    paddingVertical: 15,
     marginBottom: 10,
   },
-  picker: {
-    height: 50,
+  dropdownText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  placeholderText: {
+    color: '#999',
+  },
+  dropdownArrow: {
+    fontSize: 12,
+    color: '#666',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 20,
+    width: '80%',
+    maxHeight: '60%',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  bloodGroupItem: {
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  bloodGroupText: {
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  modalCloseButton: {
+    marginTop: 15,
+    paddingVertical: 12,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+  },
+  modalCloseText: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#666',
   },
 });
