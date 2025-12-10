@@ -28,7 +28,7 @@ export default function Question4({ navigation }: Props) {
       </View>
 
       <TextInput
-        placeholder="Type the name (e.g., Lion)"
+        placeholder="Type the name"
         value={name}
         onChangeText={setName}
         style={styles.input}
