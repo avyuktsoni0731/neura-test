@@ -143,6 +143,7 @@ export const useAppStore = create((set, get) => ({
               {
                 ...quizResults,
                 timestamp: Date.now(),
+                date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
               },
             ],
           };
@@ -158,6 +159,68 @@ export const useAppStore = create((set, get) => ({
     } catch (error) {
       console.error('Failed to save quiz results:', error);
     }
+  },
+
+  // Save motor test results for a patient
+  saveMotorResults: async (patientId, motorResults) => {
+    const { practitioner, patients } = get();
+    try {
+      const updatedPatients = patients.map(patient => {
+        if (patient.id === patientId) {
+          return {
+            ...patient,
+            motorResults: [
+              ...(patient.motorResults || []),
+              {
+                ...motorResults,
+                timestamp: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+              },
+            ],
+          };
+        }
+        return patient;
+      });
+
+      await AsyncStorage.setItem(
+        `patients_${practitioner.mobile}`,
+        JSON.stringify(updatedPatients),
+      );
+      set({ patients: updatedPatients });
+    } catch (error) {
+      console.error('Failed to save motor results:', error);
+    }
+  },
+
+  // Get all screening reports
+  getScreeningReports: () => {
+    const { patients } = get();
+    const reports = [];
+
+    patients.forEach(patient => {
+      if (patient.quizResults && patient.quizResults.length > 0) {
+        patient.quizResults.forEach(quiz => {
+          const motorResult = patient.motorResults?.find(
+            motor => Math.abs(motor.timestamp - quiz.timestamp) < 300000, // Within 5 minutes
+          );
+
+          reports.push({
+            id: `${patient.id}_${quiz.timestamp}`,
+            patientId: patient.id,
+            patientName: patient.name,
+            patientAge: patient.age,
+            date:
+              quiz.date || new Date(quiz.timestamp).toISOString().split('T')[0],
+            cognitiveScore: quiz.totalScore || 0,
+            maxCognitiveScore: quiz.maxScore || 10,
+            motorScore: motorResult?.totalScore || 0,
+            timestamp: quiz.timestamp,
+          });
+        });
+      }
+    });
+
+    return reports.sort((a, b) => b.timestamp - a.timestamp);
   },
 
   // Existing methods...

@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store/appstore.js';
+import { Picker } from '@react-native-picker/picker';
 
 export default function AddPatientScreen({ navigation, route }) {
   const { t } = useTranslation();
@@ -21,6 +22,28 @@ export default function AddPatientScreen({ navigation, route }) {
   const [sex, setSex] = useState('');
   const [phone, setPhone] = useState('');
   const [medicalHistory, setMedicalHistory] = useState('');
+  const [bloodGroup, setBloodGroup] = useState('');
+  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+
+  const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
+  const formatDate = text => {
+    const cleaned = text.replace(/\D/g, '');
+    let formatted = cleaned;
+
+    if (cleaned.length > 2 && cleaned.length <= 4) {
+      formatted = `${cleaned.slice(0, 2)}-${cleaned.slice(2)}`;
+    } else if (cleaned.length > 4) {
+      formatted = `${cleaned.slice(0, 2)}-${cleaned.slice(
+        2,
+        4,
+      )}-${cleaned.slice(4, 8)}`;
+    }
+
+    return formatted.slice(0, 10);
+  };
 
   const handleSavePatient = async () => {
     // Validation
@@ -36,6 +59,22 @@ export default function AddPatientScreen({ navigation, route }) {
       Alert.alert(t('common.error'), t('addPatient.validationSex'));
       return;
     }
+    if (!bloodGroup.trim()) {
+      Alert.alert(t('common.error'), 'Please select blood group');
+      return;
+    }
+    if (!weight.trim()) {
+      Alert.alert(t('common.error'), 'Please enter weight');
+      return;
+    }
+    if (!height.trim()) {
+      Alert.alert(t('common.error'), 'Please enter height');
+      return;
+    }
+    if (!dateOfBirth.trim() || dateOfBirth.length !== 10) {
+      Alert.alert(t('common.error'), 'Please enter valid date of birth');
+      return;
+    }
 
     const patient = {
       id: Date.now().toString(),
@@ -44,6 +83,10 @@ export default function AddPatientScreen({ navigation, route }) {
       sex: sex.trim(),
       phone: phone.trim(),
       medicalHistory: medicalHistory.trim(),
+      bloodGroup: bloodGroup.trim(),
+      weight: weight.trim(),
+      height: height.trim(),
+      dateOfBirth: dateOfBirth.trim(),
       practitionerId: practitioner.mobile,
       createdAt: Date.now(),
     };
@@ -103,12 +146,57 @@ export default function AddPatientScreen({ navigation, route }) {
         placeholderTextColor="#999"
       />
 
+      <Text style={styles.label}>Date of Birth *</Text>
+      <TextInput
+        style={styles.input}
+        value={dateOfBirth}
+        onChangeText={text => setDateOfBirth(formatDate(text))}
+        placeholder="DD-MM-YYYY"
+        keyboardType="numeric"
+        maxLength={10}
+        placeholderTextColor="#999"
+      />
+
       <Text style={styles.label}>{t('addPatient.sex')}</Text>
       <View style={styles.sexContainer}>
         <SexButton value="Male" label={t('addPatient.male')} />
         <SexButton value="Female" label={t('addPatient.female')} />
         <SexButton value="Other" label={t('addPatient.other')} />
       </View>
+
+      <Text style={styles.label}>Blood Group *</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={bloodGroup}
+          onValueChange={setBloodGroup}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Blood Group" value="" />
+          {bloodGroups.map(group => (
+            <Picker.Item key={group} label={group} value={group} />
+          ))}
+        </Picker>
+      </View>
+
+      <Text style={styles.label}>Weight (kg) *</Text>
+      <TextInput
+        style={styles.input}
+        value={weight}
+        onChangeText={setWeight}
+        placeholder="Enter weight in kg"
+        keyboardType="numeric"
+        placeholderTextColor="#999"
+      />
+
+      <Text style={styles.label}>Height (cm) *</Text>
+      <TextInput
+        style={styles.input}
+        value={height}
+        onChangeText={setHeight}
+        placeholder="Enter height in cm"
+        keyboardType="numeric"
+        placeholderTextColor="#999"
+      />
 
       <Text style={styles.label}>{t('addPatient.phone')}</Text>
       <TextInput
@@ -207,5 +295,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: '700',
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 12,
+    backgroundColor: '#f8f9fa',
+    marginBottom: 10,
+  },
+  picker: {
+    height: 50,
   },
 });
