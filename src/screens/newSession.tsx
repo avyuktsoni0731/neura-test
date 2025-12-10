@@ -40,7 +40,8 @@ export default function NewSessionScreen({ navigation }) {
       return;
     }
     // Start screening session
-    navigation.navigate('PosturalTremor', { patient: selectedPatient });
+    //navigation.navigate('PosturalTremor', { patient: selectedPatient });
+    navigation.navigate('FingerTapping', { patient: selectedPatient });
   };
 
   const handleDeletePatient = (patientId: string, patientName: string) => {

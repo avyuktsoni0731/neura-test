@@ -1,7 +1,7 @@
 // src/ml/inference.ts
 import * as ort from 'onnxruntime-react-native';
 import featureNamesJson from '../../assets/ml/features_name.json';
-import scalerParamsJson from '../../assets/ml/scaler_params.json';
+import scalerParamsJson from '../../assets/ml/scalarParams.json';
 
 // Types
 type ScalerParams = {
@@ -63,5 +63,5 @@ export async function predictSeverity(raw: RawFeatures): Promise<number> {
     throw new Error('Empty model output');
   }
 
-  return (output.data as number[])[0];
+  return Number((output.data as any)[0]);
 }

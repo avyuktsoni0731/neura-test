@@ -3,18 +3,19 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAppStore } from '../store/appstore.js';
 
-import LoginScreen from '../screens/loginScreen.tsx';
-import BottomTabs from './navbar.tsx';
-import AddPatientScreen from '../screens/addPatient.tsx';
-import Question1 from '../screens/questions/q1.tsx';
-import Question2 from '../screens/questions/q2.tsx';
-import Question3 from '../screens/questions/q3.tsx';
-import Question4 from '../screens/questions/q4.tsx';
-import Question5 from '../screens/questions/q5.tsx';
-import TestResult from '../screens/questions/result.tsx';
-import HomeScreen from '../screens/home.tsx';
-import PosturalTremorScreen from '../screens/PosturalTremor.tsx';
-import TimedUpAndGoScreen from '../screens/TimedUpAndGo.tsx';
+import FingerTappingCamera from '../screens/FingerTappingCamera';
+import LoginScreen from '../screens/loginScreen';
+import BottomTabs from './navbar';
+import AddPatientScreen from '../screens/addPatient';
+import Question1 from '../screens/questions/q1';
+import Question2 from '../screens/questions/q2';
+import Question3 from '../screens/questions/q3';
+import Question4 from '../screens/questions/q4';
+import Question5 from '../screens/questions/q5';
+import TestResult from '../screens/questions/result';
+import HomeScreen from '../screens/home';
+import PosturalTremorScreen from '../screens/PosturalTremor';
+import TimedUpAndGoScreen from '../screens/TimedUpAndGo';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -24,6 +25,7 @@ export type RootStackParamList = {
   Screening: { patient: any };
   PosturalTremor: { patient: any };
   TimedUpAndGo: { patient: any };
+  FingerTapping: { patient: any };
   Question1: undefined;
   Question2: undefined;
   Question3: undefined;
@@ -48,6 +50,7 @@ export default function AppNavigator() {
 
   return (
     <Stack.Navigator
+      id="root"
       screenOptions={{ headerShown: false }}
       initialRouteName={isLoggedIn ? 'MainTabs' : 'Login'} // start where you want
     >
@@ -57,6 +60,7 @@ export default function AppNavigator() {
       <Stack.Screen name="AddPatient" component={AddPatientScreen} />
       <Stack.Screen name="PosturalTremor" component={PosturalTremorScreen} />
       <Stack.Screen name="TimedUpAndGo" component={TimedUpAndGoScreen} />
+      <Stack.Screen name="FingerTapping" component={FingerTappingCamera} options={{ headerShown: true, title: 'Finger Tapping Test' }} />
 
       <Stack.Screen name="Question1" component={Question1} />
       <Stack.Screen name="Question2" component={Question2} />

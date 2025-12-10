@@ -22,7 +22,7 @@ interface SessionHistory {
 }
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import AddPatientScreen from './addPatient.js';
-import { RootStackParamList } from '../navigation/appNavigator.tsx';
+import { RootStackParamList } from '../navigation/appNavigator';
 
 export default function HomeScreen() {
   const { t } = useTranslation();
