@@ -39,8 +39,8 @@ export default function NewSessionScreen({ navigation }) {
       Alert.alert(t('common.error'), t('newSession.selectPatientFirst'));
       return;
     }
-    // Start screening session
-    navigation.navigate('PosturalTremor', { patient: selectedPatient });
+    // Navigate to motor test instructions screen
+    navigation.navigate('MotorTestInstructions', { patient: selectedPatient });
   };
 
   const handleDeletePatient = (patientId: string, patientName: string) => {

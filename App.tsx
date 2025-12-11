@@ -8,6 +8,21 @@
 import './app.css';
 import './nativewind-env.d.ts';
 import './src/i18n'; // Initialize i18n
+
+// Polyfill TextDecoder for React Native (required by @react-pdf/renderer)
+if (typeof TextDecoder === 'undefined') {
+  (global as any).TextDecoder = class TextDecoder {
+    decode(input: any) {
+      if (typeof input === 'string') return input;
+      const bytes = new Uint8Array(input);
+      let result = '';
+      for (let i = 0; i < bytes.length; i++) {
+        result += String.fromCharCode(bytes[i]);
+      }
+      return result;
+    }
+  };
+}
 import { StatusBar, useColorScheme, View } from 'react-native';
 import {
   SafeAreaProvider,
