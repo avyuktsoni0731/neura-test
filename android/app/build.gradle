@@ -118,4 +118,7 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    implementation 'com.google.mediapipe:tasks-vision:0.10.14'
+    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.17.0'
 }
