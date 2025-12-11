@@ -7,8 +7,8 @@ import { useQuizStore } from '../../store/quizStore';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Question2'>;
 
-const ORIGINAL_WORDS = ['Face', 'Velvet', 'Church', 'Daisy'];
-const DISTRACTORS = ['River', 'Window', 'Tiger', 'Bottle'];
+const ORIGINAL_WORDS = ['face', 'velvet', 'church', 'daisy'];
+const DISTRACTORS = ['river', 'window', 'tiger', 'bottle'];
 
 export default function Question2({ navigation, route }: Props) {
   const { t } = useTranslation();
@@ -19,10 +19,15 @@ export default function Question2({ navigation, route }: Props) {
 
   const setQuizAnswer = useQuizStore(s => s.setAnswer);
 
+  // Helper function to get translated word
+  const getTranslatedWord = (wordKey: string) => {
+    return t(`questions.words.${wordKey}`);
+  };
+
   useEffect(() => {
     // store original words earlier for later delayed recall scoring
     if (useQuizStore.getState().answers.wordList.length === 0) {
-      setQuizAnswer('wordList', ORIGINAL_WORDS);
+      setQuizAnswer('wordList', ORIGINAL_WORDS.map(getTranslatedWord));
     }
 
     const timer = setTimeout(() => {
@@ -36,9 +41,12 @@ export default function Question2({ navigation, route }: Props) {
     return () => clearTimeout(timer);
   }, []);
 
-  const toggleSelect = (word: string) => {
+  const toggleSelect = (wordKey: string) => {
+    const translatedWord = getTranslatedWord(wordKey);
     setSelected(prev =>
-      prev.includes(word) ? prev.filter(w => w !== word) : [...prev, word],
+      prev.includes(translatedWord)
+        ? prev.filter(w => w !== translatedWord)
+        : [...prev, translatedWord],
     );
   };
 
@@ -58,9 +66,9 @@ export default function Question2({ navigation, route }: Props) {
           <Text style={styles.question}>{t('questions.memorizeWords')}</Text>
 
           <View style={styles.wordBox}>
-            {ORIGINAL_WORDS.map(w => (
-              <Text key={w} style={styles.wordItem}>
-                {w}
+            {ORIGINAL_WORDS.map(wordKey => (
+              <Text key={wordKey} style={styles.wordItem}>
+                {getTranslatedWord(wordKey)}
               </Text>
             ))}
           </View>
@@ -70,25 +78,28 @@ export default function Question2({ navigation, route }: Props) {
           <Text style={styles.question}>{t('questions.selectWords')}</Text>
 
           <View style={styles.choiceBox}>
-            {choices.map(w => (
-              <TouchableOpacity
-                key={w}
-                style={[
-                  styles.choiceItem,
-                  selected.includes(w) && styles.selected,
-                ]}
-                onPress={() => toggleSelect(w)}
-              >
-                <Text
+            {choices.map(wordKey => {
+              const translatedWord = getTranslatedWord(wordKey);
+              return (
+                <TouchableOpacity
+                  key={wordKey}
                   style={[
-                    styles.choiceText,
-                    selected.includes(w) && styles.selectedText,
+                    styles.choiceItem,
+                    selected.includes(translatedWord) && styles.selected,
                   ]}
+                  onPress={() => toggleSelect(wordKey)}
                 >
-                  {w}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    style={[
+                      styles.choiceText,
+                      selected.includes(translatedWord) && styles.selectedText,
+                    ]}
+                  >
+                    {translatedWord}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
 
           <TouchableOpacity

@@ -72,15 +72,23 @@ export default function HomeScreen() {
   };
 
   const getRiskColor = (risk: string) => {
-    switch (risk) {
+    if (risk.includes('Low') || risk === t('home.lowRisk')) return '#22c55e';
+    if (risk.includes('Medium') || risk === t('home.moderateRisk'))
+      return '#eab308';
+    if (risk.includes('High') || risk === t('home.highRisk')) return '#ef4444';
+    return '#9ca3af';
+  };
+
+  const getRiskTranslation = (riskLevel: string) => {
+    switch (riskLevel) {
       case 'Low Risk':
-        return '#22c55e';
+        return t('home.lowRisk');
       case 'Medium Risk':
-        return '#eab308';
+        return t('home.moderateRisk');
       case 'High Risk':
-        return '#ef4444';
+        return t('home.highRisk');
       default:
-        return '#9ca3af';
+        return riskLevel;
     }
   };
 
@@ -89,9 +97,9 @@ export default function HomeScreen() {
     cognitiveScore: number,
     motorScore: number,
   ): string => {
-    if (cognitiveScore >= 8 && motorScore >= 20) return 'Low Risk';
-    if (cognitiveScore >= 6 && motorScore >= 15) return 'Medium Risk';
-    return 'High Risk';
+    if (cognitiveScore >= 8 && motorScore >= 20) return t('home.lowRisk');
+    if (cognitiveScore >= 6 && motorScore >= 15) return t('home.moderateRisk');
+    return t('home.highRisk');
   };
 
   // Get patient data with latest results
@@ -123,7 +131,7 @@ export default function HomeScreen() {
         <View style={styles.patientInfo}>
           <Text style={styles.patientName}>{item.name}</Text>
           <Text style={styles.patientAge}>
-            Age {item.age} • {item.date}
+            {t('home.age')} {item.age} • {item.date}
           </Text>
         </View>
         <View
@@ -132,17 +140,19 @@ export default function HomeScreen() {
             { backgroundColor: getRiskColor(item.riskLevel) },
           ]}
         >
-          <Text style={styles.riskText}>{item.riskLevel}</Text>
+          <Text style={styles.riskText}>
+            {getRiskTranslation(item.riskLevel)}
+          </Text>
         </View>
       </View>
 
       <View style={styles.scoresGrid}>
         <View style={styles.scoreItem}>
-          <Text style={styles.scoreLabel}>Motor Score</Text>
+          <Text style={styles.scoreLabel}>{t('home.motorScore')}</Text>
           <Text style={styles.scoreValue}>{item.motorScore}</Text>
         </View>
         <View style={styles.scoreItem}>
-          <Text style={styles.scoreLabel}>Cognitive Score</Text>
+          <Text style={styles.scoreLabel}>{t('home.cognitiveScore')}</Text>
           <Text style={styles.scoreValue}>{item.cognitiveTime}</Text>
         </View>
       </View>
@@ -155,15 +165,15 @@ export default function HomeScreen() {
         <Text style={styles.reportPatientName}>{item.patientName}</Text>
         <Text style={styles.reportDate}>{item.date}</Text>
         <Text style={styles.reportScores}>
-          Cognitive: {item.cognitiveScore}/{item.maxCognitiveScore} • Motor:{' '}
-          {item.motorScore}
+          {t('home.cognitive')}: {item.cognitiveScore}/{item.maxCognitiveScore}{' '}
+          • {t('home.motor')}: {item.motorScore}
         </Text>
       </View>
       <TouchableOpacity
         style={styles.exportButton}
         onPress={() => handleExportPDF(item)}
       >
-        <Text style={styles.exportButtonText}>Export PDF</Text>
+        <Text style={styles.exportButtonText}>{t('home.exportPDF')}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -183,7 +193,9 @@ export default function HomeScreen() {
         <View>
           <Text style={styles.appTitle}>NeuroSense</Text>
           <Text style={styles.greeting}>
-            Hello, {practitioner.name || 'Avyukt'}
+            {t('home.welcomeText', {
+              name: practitioner?.name || t('home.practitioner'),
+            })}
           </Text>
         </View>
         <View style={styles.wifiIcon}>
@@ -193,7 +205,7 @@ export default function HomeScreen() {
 
       {/* Device Status */}
       <View style={styles.deviceStatus}>
-        <Text style={styles.deviceStatusTitle}>Device Status</Text>
+        <Text style={styles.deviceStatusTitle}>{t('home.deviceStatus')}</Text>
         <View style={styles.deviceInfo}>
           <View style={styles.statusIndicator}>
             <Text style={styles.wifiIcon}>📶</Text>
@@ -203,15 +215,15 @@ export default function HomeScreen() {
                   styles.statusText,
                   {
                     color:
-                      connectionStatus === 'connected' ? '#22c55e' : '#ef4444',
+                      connectionStatus === 'connected' ? '#10b981' : '#ef4444',
                   },
                 ]}
               >
                 {connectionStatus === 'connected'
-                  ? 'Connected'
-                  : 'Disconnected'}
+                  ? t('home.connected')
+                  : t('home.disconnected')}
               </Text>
-              <Text style={styles.deviceName}>NeuroSense Kit #001</Text>
+              <Text style={styles.deviceName}>{t('home.deviceName')}</Text>
             </View>
           </View>
         </View>
@@ -229,7 +241,7 @@ export default function HomeScreen() {
               activeTab === 'patients' && styles.activeTabText,
             ]}
           >
-            👥 Patients
+            {t('home.patientsTab')}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -242,7 +254,7 @@ export default function HomeScreen() {
               activeTab === 'reports' && styles.activeTabText,
             ]}
           >
-            📋 Reports
+            {t('home.reportsTab')}
           </Text>
         </TouchableOpacity>
       </View>

@@ -11,7 +11,10 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useTelemetryData from '../../../utils/useTelemetryData';
 
-export default function MotorTestInstructionsScreen({ navigation, route }: any) {
+export default function MotorTestInstructionsScreen({
+  navigation,
+  route,
+}: any) {
   const { t } = useTranslation();
   const { patient } = route.params || {};
   const isDarkMode = useColorScheme() === 'dark';
@@ -22,15 +25,29 @@ export default function MotorTestInstructionsScreen({ navigation, route }: any) 
 
   if (!patient) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 20,
+        }}
+      >
         <Text style={{ fontSize: 16, color: '#EF4444', textAlign: 'center' }}>
           {t('common.error')}: Patient data not found
         </Text>
         <TouchableOpacity
-          style={{ marginTop: 20, padding: 12, backgroundColor: '#2563EB', borderRadius: 8 }}
+          style={{
+            marginTop: 20,
+            padding: 12,
+            backgroundColor: '#2563EB',
+            borderRadius: 8,
+          }}
           onPress={() => navigation.navigate('MainTabs', { screen: 'Home' })}
         >
-          <Text style={{ color: '#fff', fontWeight: '600' }}>Return to Home</Text>
+          <Text style={{ color: '#fff', fontWeight: '600' }}>
+            {t('motorTests.returnToHome')}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -67,7 +84,7 @@ export default function MotorTestInstructionsScreen({ navigation, route }: any) 
           >
             <Text style={styles.backButtonText}>← Back</Text>
           </TouchableOpacity>
-          <Text style={styles.title}>Motor Function Tests</Text>
+          <Text style={styles.title}>{t('motorTests.title')}</Text>
         </View>
 
         {/* Patient Info Card */}
@@ -92,7 +109,9 @@ export default function MotorTestInstructionsScreen({ navigation, route }: any) 
         <View style={styles.instructionsCard}>
           <View style={styles.cardHeader}>
             <Text style={styles.cardIcon}>📋</Text>
-            <Text style={styles.cardTitle}>Setup Instructions</Text>
+            <Text style={styles.cardTitle}>
+              {t('motorTests.setupInstructions')}
+            </Text>
           </View>
 
           {/* WiFi Connection */}
@@ -136,7 +155,12 @@ export default function MotorTestInstructionsScreen({ navigation, route }: any) 
                 isConnected && styles.refreshButtonActive,
               ]}
             >
-              <Text style={[styles.refreshButtonText, isConnected && { color: '#fff' }]}>
+              <Text
+                style={[
+                  styles.refreshButtonText,
+                  isConnected && { color: '#fff' },
+                ]}
+              >
                 {t('posturalTremor.refresh')}
               </Text>
             </TouchableOpacity>
@@ -152,7 +176,7 @@ export default function MotorTestInstructionsScreen({ navigation, route }: any) 
         <View style={styles.overviewCard}>
           <View style={styles.cardHeader}>
             <Text style={styles.cardIcon}>🧪</Text>
-            <Text style={styles.cardTitle}>Test Overview</Text>
+            <Text style={styles.cardTitle}>{t('motorTests.testOverview')}</Text>
           </View>
           <View style={styles.testList}>
             <View style={styles.testItem}>
@@ -160,9 +184,11 @@ export default function MotorTestInstructionsScreen({ navigation, route }: any) 
                 <Text style={styles.testNumberText}>1</Text>
               </View>
               <View style={styles.testContent}>
-                <Text style={styles.testName}>Rest Tremor Test</Text>
+                <Text style={styles.testName}>
+                  {t('motorTests.restTremorTest')}
+                </Text>
                 <Text style={styles.testDescription}>
-                  Measure tremor while hands are at rest
+                  {t('motorTests.restTremorDescription')}
                 </Text>
               </View>
             </View>
@@ -171,9 +197,11 @@ export default function MotorTestInstructionsScreen({ navigation, route }: any) 
                 <Text style={styles.testNumberText}>2</Text>
               </View>
               <View style={styles.testContent}>
-                <Text style={styles.testName}>Postural Tremor Test</Text>
+                <Text style={styles.testName}>
+                  {t('motorTests.posturalTremorTest')}
+                </Text>
                 <Text style={styles.testDescription}>
-                  Measure tremor while holding arms outstretched
+                  {t('motorTests.posturalTremorDescription')}
                 </Text>
               </View>
             </View>
@@ -198,7 +226,7 @@ export default function MotorTestInstructionsScreen({ navigation, route }: any) 
             ]}
           >
             {isConnected
-              ? 'Start Motor Tests'
+              ? t('motorTests.startMotorTests')
               : t('posturalTremor.connectDeviceFirst')}
           </Text>
         </TouchableOpacity>
@@ -461,4 +489,3 @@ const styles = StyleSheet.create({
     color: '#9CA3AF',
   },
 });
-
