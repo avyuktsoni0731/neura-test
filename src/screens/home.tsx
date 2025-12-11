@@ -229,6 +229,25 @@ export default function HomeScreen() {
         </View>
       </View>
 
+      {/* Quick Actions */}
+      <View style={styles.quickActions}>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => {
+            const testPatient = patients[0] || { id: 'test_patient', name: 'Test Patient', age: 30, sex: 'Male' };
+            navigation.navigate('FingerTapping', { patient: testPatient });
+          }}
+        >
+          <View style={styles.actionIconContainer}>
+            <Text style={styles.actionIcon}>👆</Text>
+          </View>
+          <View>
+            <Text style={styles.actionTitle}>Finger Tapping Test</Text>
+            <Text style={styles.actionSubtitle}>Start new assessment</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
       {/* Tabs */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
@@ -319,6 +338,43 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 2,
+  },
+  quickActions: {
+    marginHorizontal: 20,
+    marginBottom: 20,
+  },
+  actionButton: {
+    backgroundColor: '#3b82f6',
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#3b82f6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  actionIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  actionIcon: {
+    fontSize: 24,
+  },
+  actionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  actionSubtitle: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.8)',
   },
   deviceStatusTitle: {
     fontSize: 18,
