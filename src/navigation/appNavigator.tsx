@@ -14,7 +14,10 @@ import Question4 from '../screens/questions/q4.tsx';
 import Question5 from '../screens/questions/q5.tsx';
 import TestResult from '../screens/questions/result.tsx';
 import HomeScreen from '../screens/home.tsx';
-import PosturalTremorScreen from '../screens/PosturalTremor.tsx';
+import MotorTestInstructionsScreen from '../screens/motorTests/MotorTestInstructions.tsx';
+import PosturalTremorScreen from '../screens/motorTests/PosturalTremor.tsx';
+import RestTremorScreen from '../screens/motorTests/RestTremor.tsx';
+import MotorTestReportScreen from '../screens/motorTests/MotorTestReport.tsx';
 import TimedUpAndGoScreen from '../screens/TimedUpAndGo.tsx';
 import OnboardingContainer from '../screens/onboarding/OnboardingContainer.tsx';
 
@@ -24,7 +27,10 @@ export type RootStackParamList = {
   MainTabs: undefined;
   AddPatient: { onPatientAdded?: () => void };
   Screening: { patient: any };
+  MotorTestInstructions: { patient: any };
   PosturalTremor: { patient: any };
+  RestTremor: { patient: any };
+  MotorTestReport: { patient: any };
   TimedUpAndGo: { patient: any };
   Question1: { patient: any };
   Question2: { patient: any };
@@ -79,17 +85,19 @@ export default function AppNavigator() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{ headerShown: false }}
-        initialRouteName={isLoggedIn ? 'MainTabs' : 'Login'}
-      >
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="MainTabs" component={BottomTabs} />
-        <Stack.Screen name="AddPatient" component={AddPatientScreen} />
-        <Stack.Screen name="PosturalTremor" component={PosturalTremorScreen} />
-        <Stack.Screen name="TimedUpAndGo" component={TimedUpAndGoScreen} />
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName={isLoggedIn ? 'MainTabs' : 'Login'} // start where you want
+    >
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="MainTabs" component={BottomTabs} />
+      <Stack.Screen name="AddPatient" component={AddPatientScreen} />
+      <Stack.Screen name="MotorTestInstructions" component={MotorTestInstructionsScreen} />
+      <Stack.Screen name="RestTremor" component={RestTremorScreen} />
+      <Stack.Screen name="PosturalTremor" component={PosturalTremorScreen} />
+      <Stack.Screen name="MotorTestReport" component={MotorTestReportScreen} />
+      <Stack.Screen name="TimedUpAndGo" component={TimedUpAndGoScreen} />
 
         <Stack.Screen name="Question1" component={Question1} />
         <Stack.Screen name="Question2" component={Question2} />
