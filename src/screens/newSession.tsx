@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store/appstore.js';
+// import { useCameraDevices } from 'react-native-vision-camera';
 
 interface Patient {
   id: string;
@@ -25,6 +26,11 @@ export default function NewSessionScreen({ navigation }) {
   const { t } = useTranslation();
   const { practitioner, patients, loadPatients, deletePatient } = useAppStore();
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  // const devices = useCameraDevices();
+  //
+  // if (!devices || devices.length === 0) {
+  //   return <Text>Camera not available</Text>;
+  // }
 
   useEffect(() => {
     loadPatients();
@@ -105,15 +111,15 @@ export default function NewSessionScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>{t('newSession.title')}</Text>
-      <Text style={styles.subText}>
-        {t('newSession.subtitle')}
-      </Text>
+      <Text style={styles.subText}>{t('newSession.subtitle')}</Text>
 
       <TouchableOpacity style={styles.addBtn} onPress={handleAddPatient}>
         <Text style={styles.addBtnText}>{t('newSession.addNewPatient')}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.sectionTitle}>{t('newSession.existingPatients')}</Text>
+      <Text style={styles.sectionTitle}>
+        {t('newSession.existingPatients')}
+      </Text>
 
       <View
         className="flex-col justify-between gap-4"
@@ -127,7 +133,9 @@ export default function NewSessionScreen({ navigation }) {
           contentContainerStyle={styles.patientListContent}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
-            <Text style={styles.emptyText}>{t('newSession.noPatientsYet')}</Text>
+            <Text style={styles.emptyText}>
+              {t('newSession.noPatientsYet')}
+            </Text>
           }
         />
 
@@ -136,7 +144,9 @@ export default function NewSessionScreen({ navigation }) {
             style={styles.startBtn}
             onPress={handleStartScreening}
           >
-            <Text style={styles.startBtnText}>{t('newSession.startScreening')}</Text>
+            <Text style={styles.startBtnText}>
+              {t('newSession.startScreening')}
+            </Text>
           </TouchableOpacity>
         )}
       </View>
