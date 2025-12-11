@@ -15,8 +15,24 @@ import { useSessionStore } from '../../store/sessionStore';
 
 export default function PosturalTremorScreen({ navigation, route }: any) {
   const { t } = useTranslation();
-  const { patient } = route.params;
+  const { patient } = route.params || {};
   const { savePosturalTremorResults } = useSessionStore();
+
+  if (!patient) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+        <Text style={{ fontSize: 16, color: '#EF4444', textAlign: 'center' }}>
+          {t('common.error')}: Patient data not found
+        </Text>
+        <TouchableOpacity
+          style={{ marginTop: 20, padding: 12, backgroundColor: '#2563EB', borderRadius: 8 }}
+          onPress={() => navigation.navigate('MainTabs', { screen: 'Home' })}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600' }}>Return to Home</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
   const [showInstructions, setShowInstructions] = useState(true);
   const [showCompletion, setShowCompletion] = useState(false);
   const isDarkMode = useColorScheme() === 'dark';
@@ -247,7 +263,7 @@ export default function PosturalTremorScreen({ navigation, route }: any) {
           <TouchableOpacity
             style={styles.continueButton}
             onPress={() => {
-              navigation.navigate('MotorTestReport', { patient });
+              navigation.navigate('NeuroSenseReport', { patient });
             }}
           >
             <Text style={styles.continueButtonText}>View Final Report</Text>

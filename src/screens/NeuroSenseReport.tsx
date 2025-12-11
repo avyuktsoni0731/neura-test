@@ -11,8 +11,8 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LineChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
-import { useSessionStore } from '../../store/sessionStore';
-import { useAppStore } from '../../store/appstore';
+import { useSessionStore } from '../store/sessionStore';
+import { useAppStore } from '../store/appstore';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -26,16 +26,67 @@ interface StatisticalAnalysis {
   median: number;
 }
 
-export default function MotorTestReportScreen({ navigation, route }: any) {
+export default function NeuroSenseReportScreen({ navigation, route }: any) {
   const { t } = useTranslation();
-  const { patient } = route.params;
+  const { patient } = route.params || {};
   const { currentSession } = useSessionStore();
-  const { practitioner } = useAppStore();
+  const { practitioner, patients } = useAppStore();
   const isDarkMode = useColorScheme() === 'dark';
   const safeAreaInsets = useSafeAreaInsets();
 
+  if (!patient) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+        <Text style={{ fontSize: 16, color: '#EF4444', textAlign: 'center' }}>
+          Error: Patient data not found
+        </Text>
+        <TouchableOpacity
+          style={{ marginTop: 20, padding: 12, backgroundColor: '#2563EB', borderRadius: 8 }}
+          onPress={() => navigation.navigate('MainTabs', { screen: 'Home' })}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600' }}>Return to Home</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   const posturalTremor = currentSession?.posturalTremor;
   const restTremor = currentSession?.restTremor;
+
+  // Get latest cognitive test results for this patient
+  const currentPatient = patients.find((p: any) => p.id === patient?.id);
+  const latestCognitiveTest = currentPatient?.quizResults
+    ? currentPatient.quizResults.sort((a: any, b: any) => b.timestamp - a.timestamp)[0]
+    : null;
+
+  // Calculate cognitive test breakdown
+  const cognitiveBreakdown = latestCognitiveTest?.answers
+    ? {
+        dateOrientation: {
+          entered: latestCognitiveTest.answers.Question1?.entered || '-',
+          isCorrect: latestCognitiveTest.answers.Question1?.isCorrect || false,
+        },
+        wordRecall: {
+          correct: (latestCognitiveTest.answers.Question2 || []).filter((w: string) =>
+            (latestCognitiveTest.answers.wordList || []).includes(w),
+          ).length,
+          total: 4,
+        },
+        digitSpan: {
+          correct: latestCognitiveTest.answers.Question3 === '3185' ? 1 : 0,
+          total: 1,
+        },
+        pictureNaming: {
+          correct:
+            latestCognitiveTest.answers.Question4?.toLowerCase().trim() === 'lion' ? 1 : 0,
+          total: 1,
+        },
+        spatialMemory: {
+          correct: latestCognitiveTest.answers.Question5?.correctCount || 0,
+          total: 4,
+        },
+      }
+    : null;
 
   // Calculate statistical analysis
   const calculateStats = (data: number[]): StatisticalAnalysis => {
@@ -243,8 +294,8 @@ export default function MotorTestReportScreen({ navigation, route }: any) {
       >
         {/* Report Header */}
           <View style={styles.reportHeader}>
-            <Text style={styles.reportTitle}>Motor Function Assessment Report</Text>
-            <Text style={styles.reportSubtitle}>Tremor Analysis & Clinical Evaluation</Text>
+            <Text style={styles.reportTitle}>NeuroSense Assessment Report</Text>
+            <Text style={styles.reportSubtitle}>Comprehensive Cognitive & Motor Function Evaluation</Text>
           </View>
 
           {/* Patient & Practitioner Info */}
@@ -292,6 +343,194 @@ export default function MotorTestReportScreen({ navigation, route }: any) {
               </View>
             </View>
           </View>
+
+          {/* Cognitive Assessment Section */}
+          {latestCognitiveTest && cognitiveBreakdown && (
+            <View style={styles.testSection}>
+              <View style={styles.testHeader}>
+                <Text style={styles.testTitle}>Cognitive Assessment</Text>
+                <View
+                  style={[
+                    styles.severityBadge,
+                    {
+                      backgroundColor:
+                        latestCognitiveTest.totalScore >= 8
+                          ? '#22C55E'
+                          : latestCognitiveTest.totalScore >= 6
+                          ? '#F59E0B'
+                          : '#EF4444',
+                    },
+                  ]}
+                >
+                  <Text style={styles.severityText}>
+                    {latestCognitiveTest.totalScore}/{latestCognitiveTest.maxScore}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Cognitive Summary */}
+              <View style={styles.statsCard}>
+                <Text style={styles.statsTitle}>Overall Score</Text>
+                <View style={styles.statsGrid}>
+                  <View style={styles.statBox}>
+                    <Text style={styles.statLabel}>Total Score</Text>
+                    <Text style={styles.statValue}>
+                      {latestCognitiveTest.totalScore} / {latestCognitiveTest.maxScore}
+                    </Text>
+                  </View>
+                  <View style={styles.statBox}>
+                    <Text style={styles.statLabel}>Percentage</Text>
+                    <Text style={styles.statValue}>
+                      {((latestCognitiveTest.totalScore / latestCognitiveTest.maxScore) * 100).toFixed(0)}%
+                    </Text>
+                  </View>
+                  <View style={styles.statBox}>
+                    <Text style={styles.statLabel}>Assessment Date</Text>
+                    <Text style={styles.statValue}>
+                      {latestCognitiveTest.date
+                        ? new Date(latestCognitiveTest.date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })
+                        : 'N/A'}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Cognitive Test Breakdown */}
+              <View style={styles.statsCard}>
+                <Text style={styles.statsTitle}>Test Breakdown</Text>
+                <View style={styles.cognitiveList}>
+                  <View style={styles.cognitiveItem}>
+                    <Text style={styles.cognitiveLabel}>1. Date Orientation</Text>
+                    <View style={styles.cognitiveResult}>
+                      <Text style={styles.cognitiveValue}>
+                        {cognitiveBreakdown.dateOrientation.entered}
+                      </Text>
+                      <View
+                        style={[
+                          styles.cognitiveBadge,
+                          {
+                            backgroundColor: cognitiveBreakdown.dateOrientation.isCorrect
+                              ? '#22C55E'
+                              : '#EF4444',
+                          },
+                        ]}
+                      >
+                        <Text style={styles.cognitiveBadgeText}>
+                          {cognitiveBreakdown.dateOrientation.isCorrect ? '✓' : '✗'}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <View style={styles.cognitiveItem}>
+                    <Text style={styles.cognitiveLabel}>2. Word Recall</Text>
+                    <View style={styles.cognitiveResult}>
+                      <Text style={styles.cognitiveValue}>
+                        {cognitiveBreakdown.wordRecall.correct} / {cognitiveBreakdown.wordRecall.total}
+                      </Text>
+                      <View
+                        style={[
+                          styles.cognitiveBadge,
+                          {
+                            backgroundColor:
+                              cognitiveBreakdown.wordRecall.correct === cognitiveBreakdown.wordRecall.total
+                                ? '#22C55E'
+                                : cognitiveBreakdown.wordRecall.correct >= 2
+                                ? '#F59E0B'
+                                : '#EF4444',
+                          },
+                        ]}
+                      >
+                        <Text style={styles.cognitiveBadgeText}>
+                          {cognitiveBreakdown.wordRecall.correct}/{cognitiveBreakdown.wordRecall.total}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <View style={styles.cognitiveItem}>
+                    <Text style={styles.cognitiveLabel}>3. Backward Digit Span</Text>
+                    <View style={styles.cognitiveResult}>
+                      <Text style={styles.cognitiveValue}>
+                        {cognitiveBreakdown.digitSpan.correct} / {cognitiveBreakdown.digitSpan.total}
+                      </Text>
+                      <View
+                        style={[
+                          styles.cognitiveBadge,
+                          {
+                            backgroundColor: cognitiveBreakdown.digitSpan.correct === 1 ? '#22C55E' : '#EF4444',
+                          },
+                        ]}
+                      >
+                        <Text style={styles.cognitiveBadgeText}>
+                          {cognitiveBreakdown.digitSpan.correct === 1 ? '✓' : '✗'}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <View style={styles.cognitiveItem}>
+                    <Text style={styles.cognitiveLabel}>4. Picture Naming</Text>
+                    <View style={styles.cognitiveResult}>
+                      <Text style={styles.cognitiveValue}>
+                        {cognitiveBreakdown.pictureNaming.correct} / {cognitiveBreakdown.pictureNaming.total}
+                      </Text>
+                      <View
+                        style={[
+                          styles.cognitiveBadge,
+                          {
+                            backgroundColor:
+                              cognitiveBreakdown.pictureNaming.correct === 1 ? '#22C55E' : '#EF4444',
+                          },
+                        ]}
+                      >
+                        <Text style={styles.cognitiveBadgeText}>
+                          {cognitiveBreakdown.pictureNaming.correct === 1 ? '✓' : '✗'}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <View style={styles.cognitiveItem}>
+                    <Text style={styles.cognitiveLabel}>5. Spatial Memory</Text>
+                    <View style={styles.cognitiveResult}>
+                      <Text style={styles.cognitiveValue}>
+                        {cognitiveBreakdown.spatialMemory.correct} / {cognitiveBreakdown.spatialMemory.total}
+                      </Text>
+                      <View
+                        style={[
+                          styles.cognitiveBadge,
+                          {
+                            backgroundColor:
+                              cognitiveBreakdown.spatialMemory.correct === cognitiveBreakdown.spatialMemory.total
+                                ? '#22C55E'
+                                : cognitiveBreakdown.spatialMemory.correct >= 2
+                                ? '#F59E0B'
+                                : '#EF4444',
+                          },
+                        ]}
+                      >
+                        <Text style={styles.cognitiveBadgeText}>
+                          {cognitiveBreakdown.spatialMemory.correct}/{cognitiveBreakdown.spatialMemory.total}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* Motor Function Assessment Section Header */}
+          {(restTremor || posturalTremor) && (
+            <View style={styles.sectionDivider}>
+              <Text style={styles.sectionDividerText}>Motor Function Assessment</Text>
+            </View>
+          )}
 
           {/* Rest Tremor Section */}
           {restTremor && (
@@ -940,8 +1179,11 @@ export default function MotorTestReportScreen({ navigation, route }: any) {
             </Text>
             <View style={styles.interpretationCard}>
               <Text style={styles.interpretationText}>
+                {latestCognitiveTest
+                  ? `Cognitive Assessment: The patient scored ${latestCognitiveTest.totalScore} out of ${latestCognitiveTest.maxScore} (${((latestCognitiveTest.totalScore / latestCognitiveTest.maxScore) * 100).toFixed(0)}%) on the cognitive screening. ${latestCognitiveTest.totalScore >= 8 ? 'Cognitive function appears to be within normal limits.' : latestCognitiveTest.totalScore >= 6 ? 'Mild cognitive concerns noted. Further evaluation may be beneficial.' : 'Significant cognitive concerns identified. Comprehensive neuropsychological assessment recommended.'}${restTremor || posturalTremor ? '\n\n' : ''}`
+                  : ''}
                 {restTremor && posturalTremor
-                  ? `This assessment evaluated tremor characteristics during rest and postural conditions. 
+                  ? `Motor Assessment: This evaluation assessed tremor characteristics during rest and postural conditions. 
                   
 Rest tremor frequency of ${restTremor.frequency.toFixed(2)} Hz and amplitude of ${restTremor.amplitude.toFixed(2)} m/s² ${restSeverity?.severity === 'Normal' ? 'indicates normal findings' : `suggests ${restSeverity?.severity.toLowerCase()} tremor activity`}. ${restTremor.averageStatus ? `Sensor status: ${restTremor.averageStatus}.` : ''} ${restTremor.detectionRate !== undefined ? `Tremor detection rate: ${restTremor.detectionRate.toFixed(1)}%.` : ''}
 
@@ -951,10 +1193,12 @@ ${Math.abs(posturalTremor.frequency - restTremor.frequency) > 2 ? 'Significant d
 
 ${restSeverity?.severity === 'Severe' || posturalSeverity?.severity === 'Severe' ? 'Given the severity of findings, comprehensive neurological evaluation is recommended.' : restSeverity?.severity === 'Moderate' || posturalSeverity?.severity === 'Moderate' ? 'Moderate tremor detected. Consider follow-up monitoring and clinical correlation.' : 'Findings are within normal limits. Routine monitoring recommended.'}`
                   : restTremor
-                  ? `Rest tremor assessment completed. Frequency: ${restTremor.frequency.toFixed(2)} Hz, Amplitude: ${restTremor.amplitude.toFixed(2)} m/s². ${restTremor.averageStatus ? `Sensor status: ${restTremor.averageStatus}.` : ''} ${restTremor.detectionRate !== undefined ? `Detection rate: ${restTremor.detectionRate.toFixed(1)}%.` : ''} ${restSeverity?.description}`
+                  ? `Motor Assessment: Rest tremor evaluation completed. Frequency: ${restTremor.frequency.toFixed(2)} Hz, Amplitude: ${restTremor.amplitude.toFixed(2)} m/s². ${restTremor.averageStatus ? `Sensor status: ${restTremor.averageStatus}.` : ''} ${restTremor.detectionRate !== undefined ? `Detection rate: ${restTremor.detectionRate.toFixed(1)}%.` : ''} ${restSeverity?.description}`
                   : posturalTremor
-                  ? `Postural tremor assessment completed. Frequency: ${posturalTremor.frequency.toFixed(2)} Hz, Amplitude: ${posturalTremor.amplitude.toFixed(2)} m/s². ${posturalTremor.averageStatus ? `Sensor status: ${posturalTremor.averageStatus}.` : ''} ${posturalTremor.detectionRate !== undefined ? `Detection rate: ${posturalTremor.detectionRate.toFixed(1)}%.` : ''} ${posturalSeverity?.description}`
-                  : 'No test data available. Please complete both Rest Tremor and Postural Tremor tests to generate a report.'}
+                  ? `Motor Assessment: Postural tremor evaluation completed. Frequency: ${posturalTremor.frequency.toFixed(2)} Hz, Amplitude: ${posturalTremor.amplitude.toFixed(2)} m/s². ${posturalTremor.averageStatus ? `Sensor status: ${posturalTremor.averageStatus}.` : ''} ${posturalTremor.detectionRate !== undefined ? `Detection rate: ${posturalTremor.detectionRate.toFixed(1)}%.` : ''} ${posturalSeverity?.description}`
+                  : latestCognitiveTest
+                  ? 'Motor assessment data not available. Please complete motor function tests for a comprehensive evaluation.'
+                  : 'No assessment data available. Please complete cognitive and motor function tests to generate a comprehensive report.'}
               </Text>
             </View>
           </View>
@@ -1318,5 +1562,62 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  sectionDivider: {
+    marginVertical: 24,
+    paddingVertical: 16,
+    borderTopWidth: 2,
+    borderBottomWidth: 2,
+    borderColor: '#E5E7EB',
+    backgroundColor: '#F9FAFB',
+  },
+  sectionDividerText: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111827',
+    textAlign: 'center',
+  },
+  cognitiveList: {
+    gap: 12,
+  },
+  cognitiveItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  cognitiveLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#111827',
+    flex: 1,
+  },
+  cognitiveResult: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  cognitiveValue: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+  cognitiveBadge: {
+    minWidth: 50,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cognitiveBadgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '700',
   },
 });

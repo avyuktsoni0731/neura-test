@@ -11,7 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../../store/appstore.js';
 
-export default function TestResult({ route }) {
+export default function TestResult({ route }: any) {
   const { t } = useTranslation();
   const answers = useQuizStore(s => s.answers);
   const resetQuiz = useQuizStore(s => s.resetQuiz);
@@ -67,7 +67,7 @@ export default function TestResult({ route }) {
       answers,
     });
     resetQuiz();
-    navigation.navigate('PosturalTremor', { selectedPatient: patient });
+    navigation.navigate('MotorTestInstructions', { patient });
   };
 
   return (

@@ -10,16 +10,31 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useTelemetryData from '../../../utils/useTelemetryData';
-import { useSessionStore } from '../../store/sessionStore';
 
 export default function MotorTestInstructionsScreen({ navigation, route }: any) {
   const { t } = useTranslation();
-  const { patient } = route.params;
+  const { patient } = route.params || {};
   const isDarkMode = useColorScheme() === 'dark';
   const safeAreaInsets = useSafeAreaInsets();
   const { telemetry, connectionStatus, reconnect } = useTelemetryData();
 
   const isConnected = telemetry !== null && connectionStatus === 'connected';
+
+  if (!patient) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+        <Text style={{ fontSize: 16, color: '#EF4444', textAlign: 'center' }}>
+          {t('common.error')}: Patient data not found
+        </Text>
+        <TouchableOpacity
+          style={{ marginTop: 20, padding: 12, backgroundColor: '#2563EB', borderRadius: 8 }}
+          onPress={() => navigation.navigate('MainTabs', { screen: 'Home' })}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600' }}>Return to Home</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   const handleContinue = () => {
     // Start session before navigating
