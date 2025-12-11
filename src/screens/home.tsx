@@ -221,7 +221,10 @@ export default function HomeScreen() {
       <View style={styles.quickActions}>
         <TouchableOpacity
           style={styles.actionButton}
-          onPress={() => navigation.navigate('FingerTapping')}
+          onPress={() => {
+            const testPatient = patients[0] || { id: 'test_patient', name: 'Test Patient', age: 30, sex: 'Male' };
+            navigation.navigate('FingerTapping', { patient: testPatient });
+          }}
         >
           <View style={styles.actionIconContainer}>
             <Text style={styles.actionIcon}>👆</Text>

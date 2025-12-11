@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Video from 'react-native-video';
 import {
   View,
   Text,
@@ -17,6 +18,44 @@ import { processVideoAndExtractFeatures } from '../native/videoprocessor';
 import { predictFromFeatureArray, loadModelFromAssets } from '../native/onnxClient';
 import { useTranslation } from 'react-i18next';
 import Svg, { Circle, Line, Text as SvgText } from 'react-native-svg';
+
+// MediaPipe Hand Landmark Connections
+const HAND_CONNECTIONS = [
+  // Thumb
+  ['WRIST', 'THUMB_CMC'], ['THUMB_CMC', 'THUMB_MCP'], ['THUMB_MCP', 'THUMB_IP'], ['THUMB_IP', 'THUMB_TIP'],
+  // Index finger
+  ['WRIST', 'INDEX_FINGER_MCP'], ['INDEX_FINGER_MCP', 'INDEX_FINGER_PIP'], ['INDEX_FINGER_PIP', 'INDEX_FINGER_DIP'], ['INDEX_FINGER_DIP', 'INDEX_FINGER_TIP'],
+  // Middle finger
+  ['WRIST', 'MIDDLE_FINGER_MCP'], ['MIDDLE_FINGER_MCP', 'MIDDLE_FINGER_PIP'], ['MIDDLE_FINGER_PIP', 'MIDDLE_FINGER_DIP'], ['MIDDLE_FINGER_DIP', 'MIDDLE_FINGER_TIP'],
+  // Ring finger
+  ['WRIST', 'RING_FINGER_MCP'], ['RING_FINGER_MCP', 'RING_FINGER_PIP'], ['RING_FINGER_PIP', 'RING_FINGER_DIP'], ['RING_FINGER_DIP', 'RING_FINGER_TIP'],
+  // Pinky
+  ['WRIST', 'PINKY_MCP'], ['PINKY_MCP', 'PINKY_PIP'], ['PINKY_PIP', 'PINKY_DIP'], ['PINKY_DIP', 'PINKY_TIP'],
+  // Palm connections
+  ['INDEX_FINGER_MCP', 'MIDDLE_FINGER_MCP'], ['MIDDLE_FINGER_MCP', 'RING_FINGER_MCP'], ['RING_FINGER_MCP', 'PINKY_MCP'],
+];
+
+const renderHandConnections = (landmarks: { [key: string]: { x: number; y: number } }) => {
+  return HAND_CONNECTIONS.map(([start, end], index) => {
+    const startPoint = landmarks[start];
+    const endPoint = landmarks[end];
+
+    if (startPoint && endPoint) {
+      return (
+        <Line
+          key={`connection-${index}`}
+          x1={startPoint.x}
+          y1={startPoint.y}
+          x2={endPoint.x}
+          y2={endPoint.y}
+          stroke="#FFFFFF"
+          strokeWidth="0.005"
+        />
+      );
+    }
+    return null;
+  });
+};
 
 export default function FingerTappingScreen() {
   const { t } = useTranslation();
@@ -213,6 +252,68 @@ export default function FingerTappingScreen() {
             audio={false}
             ref={camera}
           />
+        )}
+
+        {/* Show Video during processing to visualize analysis */}
+        {processing && tempPath && (
+          <Video
+            ref={videoRef}
+            source={{ uri: `file://${tempPath}` }}
+            style={StyleSheet.absoluteFill}
+            resizeMode="cover"
+            paused={true} // Seeked manually by analysis events
+            onLoad={() => console.log("Processing video loaded")}
+            onError={(e) => console.error("Processing video error", e)}
+          />
+        )}
+
+        {/* CV Overlay during processing - shows hand landmarks in real-time */}
+        {processing && analyzedFrame?.landmarks && (
+          <View style={StyleSheet.absoluteFill} pointerEvents="none">
+            <Svg height="100%" width="100%" viewBox="0 0 1 1" preserveAspectRatio="xMidYMid meet">
+              {/* 1. Full Hand Skeleton (White Lines) */}
+              {renderHandConnections(analyzedFrame.landmarks)}
+
+              {/* 2. Angle Vectors (Red/Blue Lines from Wrist) */}
+              {analyzedFrame.landmarks.WRIST &&
+                analyzedFrame.landmarks.THUMB_TIP &&
+                analyzedFrame.landmarks.INDEX_FINGER_TIP && (
+                  <>
+                    {/* WRIST -> THUMB_TIP (Blue) */}
+                    <Line
+                      x1={analyzedFrame.landmarks.WRIST.x}
+                      y1={analyzedFrame.landmarks.WRIST.y}
+                      x2={analyzedFrame.landmarks.THUMB_TIP.x}
+                      y2={analyzedFrame.landmarks.THUMB_TIP.y}
+                      stroke="#0000FF"
+                      strokeWidth="0.008"
+                    />
+                    {/* WRIST -> INDEX_FINGER_TIP (Red) */}
+                    <Line
+                      x1={analyzedFrame.landmarks.WRIST.x}
+                      y1={analyzedFrame.landmarks.WRIST.y}
+                      x2={analyzedFrame.landmarks.INDEX_FINGER_TIP.x}
+                      y2={analyzedFrame.landmarks.INDEX_FINGER_TIP.y}
+                      stroke="#FF0000"
+                      strokeWidth="0.008"
+                    />
+                  </>
+                )}
+
+              {/* 3. Red Dots on All Landmarks (Small) */}
+              {Object.entries(analyzedFrame.landmarks).map(([name, point]: [string, any]) => (
+                <Circle
+                  key={name}
+                  cx={point.x}
+                  cy={point.y}
+                  r="0.012"
+                  fill="#FF0000"
+                  stroke="#FFFFFF"
+                  strokeWidth="0.002"
+                />
+              ))}
+            </Svg>
+          </View>
         )}
 
         {isRecording && (
