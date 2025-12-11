@@ -1,11 +1,49 @@
 import React, { useState, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Dimensions } from 'react-native';
 import Video, { OnProgressData, VideoRef } from 'react-native-video';
-import Svg, { Circle, Line } from 'react-native-svg';
+import Svg, { Circle, Line, Text as SvgText } from 'react-native-svg';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { FrameData } from '../native/videoprocessor';
 
 const { width, height } = Dimensions.get('window');
+
+// MediaPipe Hand Landmark Connections (based on MediaPipe topology)
+const HAND_CONNECTIONS = [
+    // Thumb
+    ['WRIST', 'THUMB_CMC'], ['THUMB_CMC', 'THUMB_MCP'], ['THUMB_MCP', 'THUMB_IP'], ['THUMB_IP', 'THUMB_TIP'],
+    // Index finger
+    ['WRIST', 'INDEX_FINGER_MCP'], ['INDEX_FINGER_MCP', 'INDEX_FINGER_PIP'], ['INDEX_FINGER_PIP', 'INDEX_FINGER_DIP'], ['INDEX_FINGER_DIP', 'INDEX_FINGER_TIP'],
+    // Middle finger
+    ['WRIST', 'MIDDLE_FINGER_MCP'], ['MIDDLE_FINGER_MCP', 'MIDDLE_FINGER_PIP'], ['MIDDLE_FINGER_PIP', 'MIDDLE_FINGER_DIP'], ['MIDDLE_FINGER_DIP', 'MIDDLE_FINGER_TIP'],
+    // Ring finger
+    ['WRIST', 'RING_FINGER_MCP'], ['RING_FINGER_MCP', 'RING_FINGER_PIP'], ['RING_FINGER_PIP', 'RING_FINGER_DIP'], ['RING_FINGER_DIP', 'RING_FINGER_TIP'],
+    // Pinky
+    ['WRIST', 'PINKY_MCP'], ['PINKY_MCP', 'PINKY_PIP'], ['PINKY_PIP', 'PINKY_DIP'], ['PINKY_DIP', 'PINKY_TIP'],
+    // Palm connections
+    ['INDEX_FINGER_MCP', 'MIDDLE_FINGER_MCP'], ['MIDDLE_FINGER_MCP', 'RING_FINGER_MCP'], ['RING_FINGER_MCP', 'PINKY_MCP'],
+];
+
+const renderHandConnections = (landmarks: { [key: string]: { x: number; y: number } }) => {
+    return HAND_CONNECTIONS.map(([start, end], index) => {
+        const startPoint = landmarks[start];
+        const endPoint = landmarks[end];
+
+        if (startPoint && endPoint) {
+            return (
+                <Line
+                    key={`connection-${index}`}
+                    x1={startPoint.x}
+                    y1={startPoint.y}
+                    x2={endPoint.x}
+                    y2={endPoint.y}
+                    stroke="#FF4444"
+                    strokeWidth="0.004"
+                />
+            );
+        }
+        return null;
+    });
+};
 
 export default function ReplayScreen() {
     const route = useRoute();
@@ -66,54 +104,90 @@ export default function ReplayScreen() {
                 <Svg height="100%" width="100%" viewBox={`0 0 1 1`}>
                     {currentFrame && currentFrame.landmarks && (
                         <>
-                            {/* Draw Wrist */}
+                            {/* MediaPipe Hand Landmark Connections */}
+                            {renderHandConnections(currentFrame.landmarks)}
+
+                            {/* Draw all landmarks as circles */}
+                            {Object.entries(currentFrame.landmarks).map(([name, point]) => (
+                                <Circle
+                                    key={name}
+                                    cx={point.x}
+                                    cy={point.y}
+                                    r="0.008"
+                                    fill="#00FF00"
+                                    stroke="#FFFFFF"
+                                    strokeWidth="0.002"
+                                />
+                            ))}
+
+                            {/* Draw and label key landmarks */}
                             {currentFrame.landmarks.WRIST && (
-                                <Circle
-                                    cx={currentFrame.landmarks.WRIST.x}
-                                    cy={currentFrame.landmarks.WRIST.y}
-                                    r="0.02" // relative radius
-                                    fill="red"
-                                />
-                            )}
-                            {/* Draw Thumb Tip */}
-                            {currentFrame.landmarks.THUMB_TIP && (
-                                <Circle
-                                    cx={currentFrame.landmarks.THUMB_TIP.x}
-                                    cy={currentFrame.landmarks.THUMB_TIP.y}
-                                    r="0.02"
-                                    fill="blue"
-                                />
-                            )}
-                            {/* Draw Index Tip */}
-                            {currentFrame.landmarks.INDEX_FINGER_TIP && (
-                                <Circle
-                                    cx={currentFrame.landmarks.INDEX_FINGER_TIP.x}
-                                    cy={currentFrame.landmarks.INDEX_FINGER_TIP.y}
-                                    r="0.02"
-                                    fill="green"
-                                />
+                                <>
+                                    <Circle
+                                        cx={currentFrame.landmarks.WRIST.x}
+                                        cy={currentFrame.landmarks.WRIST.y}
+                                        r="0.015"
+                                        fill="red"
+                                        stroke="#FFFFFF"
+                                        strokeWidth="0.003"
+                                    />
+                                    <SvgText
+                                        x={currentFrame.landmarks.WRIST.x + 0.05}
+                                        y={currentFrame.landmarks.WRIST.y}
+                                        fill="white"
+                                        fontSize="0.04"
+                                        fontWeight="bold"
+                                        textAnchor="start"
+                                    >
+                                        WRIST
+                                    </SvgText>
+                                </>
                             )}
 
-                            {/* Draw connections */}
-                            {currentFrame.landmarks.WRIST && currentFrame.landmarks.THUMB_TIP && (
-                                <Line
-                                    x1={currentFrame.landmarks.WRIST.x}
-                                    y1={currentFrame.landmarks.WRIST.y}
-                                    x2={currentFrame.landmarks.THUMB_TIP.x}
-                                    y2={currentFrame.landmarks.THUMB_TIP.y}
-                                    stroke="yellow"
-                                    strokeWidth="0.005"
-                                />
+                            {currentFrame.landmarks.THUMB_TIP && (
+                                <>
+                                    <Circle
+                                        cx={currentFrame.landmarks.THUMB_TIP.x}
+                                        cy={currentFrame.landmarks.THUMB_TIP.y}
+                                        r="0.015"
+                                        fill="#FF00FF"
+                                        stroke="#FFFFFF"
+                                        strokeWidth="0.003"
+                                    />
+                                    <SvgText
+                                        x={currentFrame.landmarks.THUMB_TIP.x}
+                                        y={currentFrame.landmarks.THUMB_TIP.y - 0.05}
+                                        fill="white"
+                                        fontSize="0.04"
+                                        fontWeight="bold"
+                                        textAnchor="middle"
+                                    >
+                                        THUMB_TIP
+                                    </SvgText>
+                                </>
                             )}
-                            {currentFrame.landmarks.WRIST && currentFrame.landmarks.INDEX_FINGER_TIP && (
-                                <Line
-                                    x1={currentFrame.landmarks.WRIST.x}
-                                    y1={currentFrame.landmarks.WRIST.y}
-                                    x2={currentFrame.landmarks.INDEX_FINGER_TIP.x}
-                                    y2={currentFrame.landmarks.INDEX_FINGER_TIP.y}
-                                    stroke="yellow"
-                                    strokeWidth="0.005"
-                                />
+
+                            {currentFrame.landmarks.INDEX_FINGER_TIP && (
+                                <>
+                                    <Circle
+                                        cx={currentFrame.landmarks.INDEX_FINGER_TIP.x}
+                                        cy={currentFrame.landmarks.INDEX_FINGER_TIP.y}
+                                        r="0.015"
+                                        fill="#00FFFF"
+                                        stroke="#FFFFFF"
+                                        strokeWidth="0.003"
+                                    />
+                                    <SvgText
+                                        x={currentFrame.landmarks.INDEX_FINGER_TIP.x}
+                                        y={currentFrame.landmarks.INDEX_FINGER_TIP.y - 0.05}
+                                        fill="white"
+                                        fontSize="0.04"
+                                        fontWeight="bold"
+                                        textAnchor="middle"
+                                    >
+                                        INDEX_FINGER_TIP
+                                    </SvgText>
+                                </>
                             )}
                         </>
                     )}

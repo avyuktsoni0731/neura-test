@@ -10,7 +10,6 @@ import {
   DeviceEventEmitter,
   EmitterSubscription,
 } from 'react-native';
-import Video from 'react-native-video';
 import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useIsFocused, useRoute } from '@react-navigation/native';

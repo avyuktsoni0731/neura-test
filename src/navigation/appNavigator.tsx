@@ -19,6 +19,7 @@ import PosturalTremorScreen from '../screens/motorTests/PosturalTremor.tsx';
 import RestTremorScreen from '../screens/motorTests/RestTremor.tsx';
 import NeuroSenseReportScreen from '../screens/NeuroSenseReport.tsx';
 import OnboardingContainer from '../screens/onboarding/OnboardingContainer.tsx';
+
 import FingerTappingScreen from '../screens/FingerTappingScreen.tsx';
 import ScoreScreen from '../screens/ScoreScreen.tsx';
 import ReplayScreen from '../screens/ReplayScreen.tsx';
@@ -44,6 +45,7 @@ export type RootStackParamList = {
   Question5: { patient: any };
   TestResult: { patient: any };
   Onboarding: undefined;
+
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -113,6 +115,8 @@ export default function AppNavigator() {
         <Stack.Screen name="Question4" component={Question4} />
         <Stack.Screen name="Question5" component={Question5} />
         <Stack.Screen name="TestResult" component={TestResult} />
+
+
       </Stack.Navigator>
 
     </NavigationContainer>
