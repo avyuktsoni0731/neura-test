@@ -23,7 +23,23 @@
     "noPatientsYet": "No patients added yet",
     "addFirstPatient": "Add your first patient to get started",
     "telemetryDashboard": "Telemetry Dashboard",
-    "startTest": "Start Test"
+    "startTest": "Start Test",
+    "deviceStatus": "Device Status",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "deviceName": "NeuroSense Kit #001",
+    "patientsTab": "👥 Patients",
+    "reportsTab": "📋 Reports",
+    "lowRisk": "Low Risk",
+    "moderateRisk": "Medium Risk",
+    "highRisk": "High Risk",
+    "cognitive": "Cognitive",
+    "motor": "Motor",
+    "export": "Export",
+    "age": "Age",
+    "motorScore": "Motor Score",
+    "cognitiveScore": "Cognitive Score",
+    "exportPDF": "Export PDF"
   },
   "addPatient": {
     "title": "Add New Patient",
@@ -31,10 +47,18 @@
     "enterNameOrId": "Enter patient name or ID",
     "age": "Age *",
     "enterAge": "Enter age",
+    "dateOfBirth": "Date of Birth *",
+    "dateOfBirthPlaceholder": "DD-MM-YYYY",
     "sex": "Sex *",
     "male": "Male",
     "female": "Female",
     "other": "Other",
+    "bloodGroup": "Blood Group *",
+    "selectBloodGroup": "Select Blood Group",
+    "weight": "Weight (kg) *",
+    "enterWeight": "Enter weight in kg",
+    "height": "Height (cm) *",
+    "enterHeight": "Enter height in cm",
     "phone": "Phone (Optional)",
     "enterPhone": "Enter phone number",
     "medicalHistory": "Medical History",
@@ -44,7 +68,12 @@
     "failedToSave": "Failed to save patient",
     "validationName": "Please enter patient name or ID",
     "validationAge": "Please enter patient age",
-    "validationSex": "Please select patient sex"
+    "validationSex": "Please select patient sex",
+    "validationBloodGroup": "Please select blood group",
+    "validationWeight": "Please enter weight",
+    "validationHeight": "Please enter height",
+    "validationDateOfBirth": "Please enter valid date of birth",
+    "cancel": "Cancel"
   },
   "login": {
     "welcomeBack": "Welcome Back!",
@@ -95,7 +124,18 @@
     "pictureQuestion": "Look at this picture. What is it?",
     "picturePlaceholder": "Type the name (e.g., Lion)",
     "spatialMemory": "Remember the positions of the circles.",
-    "finishTest": "Finish Test"
+    "finishTest": "Finish Test",
+    "words": {
+      "face": "Face",
+      "velvet": "Velvet", 
+      "church": "Church",
+      "daisy": "Daisy",
+      "river": "River",
+      "window": "Window",
+      "tiger": "Tiger",
+      "bottle": "Bottle"
+    },
+    "lion": "Lion"
   },
   "patient": {
     "details": "Age: {{age}} • {{sex}}",
@@ -164,6 +204,17 @@
     "frequency": "Frequency:",
     "amplitude": "Amplitude:",
     "waitingForData": "Waiting for sensor data..."
+  },
+  "motorTests": {
+    "title": "Motor Function Tests",
+    "setupInstructions": "Setup Instructions",
+    "testOverview": "Test Overview",
+    "restTremorTest": "Rest Tremor Test",
+    "restTremorDescription": "Measure tremor while hands are at rest",
+    "posturalTremorTest": "Postural Tremor Test", 
+    "posturalTremorDescription": "Measure tremor while holding arms outstretched",
+    "startMotorTests": "Start Motor Tests",
+    "returnToHome": "Return to Home"
   }
 }
 

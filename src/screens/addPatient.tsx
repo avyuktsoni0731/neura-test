@@ -62,19 +62,19 @@ export default function AddPatientScreen({ navigation, route }) {
       return;
     }
     if (!bloodGroup.trim()) {
-      Alert.alert(t('common.error'), 'Please select blood group');
+      Alert.alert(t('common.error'), t('addPatient.validationBloodGroup'));
       return;
     }
     if (!weight.trim()) {
-      Alert.alert(t('common.error'), 'Please enter weight');
+      Alert.alert(t('common.error'), t('addPatient.validationWeight'));
       return;
     }
     if (!height.trim()) {
-      Alert.alert(t('common.error'), 'Please enter height');
+      Alert.alert(t('common.error'), t('addPatient.validationHeight'));
       return;
     }
     if (!dateOfBirth.trim() || dateOfBirth.length !== 10) {
-      Alert.alert(t('common.error'), 'Please enter valid date of birth');
+      Alert.alert(t('common.error'), t('addPatient.validationDateOfBirth'));
       return;
     }
 
@@ -148,12 +148,12 @@ export default function AddPatientScreen({ navigation, route }) {
         placeholderTextColor="#999"
       />
 
-      <Text style={styles.label}>Date of Birth *</Text>
+      <Text style={styles.label}>{t('addPatient.dateOfBirth')}</Text>
       <TextInput
         style={styles.input}
         value={dateOfBirth}
         onChangeText={text => setDateOfBirth(formatDate(text))}
-        placeholder="DD-MM-YYYY"
+        placeholder={t('addPatient.dateOfBirthPlaceholder')}
         keyboardType="numeric"
         maxLength={10}
         placeholderTextColor="#999"
@@ -166,7 +166,7 @@ export default function AddPatientScreen({ navigation, route }) {
         <SexButton value="Other" label={t('addPatient.other')} />
       </View>
 
-      <Text style={styles.label}>Blood Group *</Text>
+      <Text style={styles.label}>{t('addPatient.bloodGroup')}</Text>
       <TouchableOpacity
         style={styles.dropdownButton}
         onPress={() => setShowBloodGroupModal(true)}
@@ -174,27 +174,27 @@ export default function AddPatientScreen({ navigation, route }) {
         <Text
           style={[styles.dropdownText, !bloodGroup && styles.placeholderText]}
         >
-          {bloodGroup || 'Select Blood Group'}
+          {bloodGroup || t('addPatient.selectBloodGroup')}
         </Text>
         <Text style={styles.dropdownArrow}>▼</Text>
       </TouchableOpacity>
 
-      <Text style={styles.label}>Weight (kg) *</Text>
+      <Text style={styles.label}>{t('addPatient.weight')}</Text>
       <TextInput
         style={styles.input}
         value={weight}
         onChangeText={setWeight}
-        placeholder="Enter weight in kg"
+        placeholder={t('addPatient.enterWeight')}
         keyboardType="numeric"
         placeholderTextColor="#999"
       />
 
-      <Text style={styles.label}>Height (cm) *</Text>
+      <Text style={styles.label}>{t('addPatient.height')}</Text>
       <TextInput
         style={styles.input}
         value={height}
         onChangeText={setHeight}
-        placeholder="Enter height in cm"
+        placeholder={t('addPatient.enterHeight')}
         keyboardType="numeric"
         placeholderTextColor="#999"
       />
@@ -233,7 +233,9 @@ export default function AddPatientScreen({ navigation, route }) {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Select Blood Group</Text>
+            <Text style={styles.modalTitle}>
+              {t('addPatient.selectBloodGroup')}
+            </Text>
             <FlatList
               data={bloodGroups}
               renderItem={({ item }) => (
@@ -253,7 +255,9 @@ export default function AddPatientScreen({ navigation, route }) {
               style={styles.modalCloseButton}
               onPress={() => setShowBloodGroupModal(false)}
             >
-              <Text style={styles.modalCloseText}>Cancel</Text>
+              <Text style={styles.modalCloseText}>
+                {t('addPatient.cancel')}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

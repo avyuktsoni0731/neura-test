@@ -30,13 +30,31 @@ export default function TestResult({ route }: any) {
 
   const wordList = answers.wordList || [];
 
-  const correctReco = (answers.Question2 || []).filter((w: string) =>
-    wordList.includes(w),
+  // Debug: Log the values to see what's happening
+  console.log('Stored wordList:', wordList);
+  console.log('Question2 answers:', answers.Question2);
+
+  // Fix: Compare selected words with stored translated words
+  const correctReco = (answers.Question2 || []).filter(
+    (selectedWord: string) => {
+      const isCorrect = wordList.includes(selectedWord);
+      console.log(`Checking "${selectedWord}" against wordList:`, isCorrect);
+      return isCorrect;
+    },
   ).length;
 
+  console.log('Correct word recall count:', correctReco);
+
   const correctDigit = answers.Question3 === '3185' ? 1 : 0;
+
+  // Get translated "lion" for comparison
+  const expectedAnimal = t('questions.lion') || 'lion';
   const namingCorrect =
-    answers.Question4?.toLowerCase().trim() === 'lion' ? 1 : 0;
+    answers.Question4?.toLowerCase().trim() ===
+    expectedAnimal.toLowerCase().trim()
+      ? 1
+      : 0;
+
   const spatialCorrect = answers.Question5?.correctCount || 0;
   const totalScore =
     correctReco + correctDigit + namingCorrect + spatialCorrect;
