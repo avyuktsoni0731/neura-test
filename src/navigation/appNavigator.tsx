@@ -19,6 +19,9 @@ import PosturalTremorScreen from '../screens/motorTests/PosturalTremor.tsx';
 import RestTremorScreen from '../screens/motorTests/RestTremor.tsx';
 import NeuroSenseReportScreen from '../screens/NeuroSenseReport.tsx';
 import OnboardingContainer from '../screens/onboarding/OnboardingContainer.tsx';
+import FingerTappingScreen from '../screens/FingerTappingScreen.tsx';
+import ScoreScreen from '../screens/ScoreScreen.tsx';
+import ReplayScreen from '../screens/ReplayScreen.tsx';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -30,6 +33,9 @@ export type RootStackParamList = {
   PosturalTremor: { patient: any };
   RestTremor: { patient: any };
   NeuroSenseReport: { patient: any };
+  FingerTapping: { patient: any };
+  Score: { score: any; videoUri: string; frames: any[]; patient: any };
+  Replay: { videoUri: string; frames: any[] };
   TimedUpAndGo: { patient: any };
   Question1: { patient: any };
   Question2: { patient: any };
@@ -85,18 +91,21 @@ export default function AppNavigator() {
 
   return (
     <NavigationContainer>
-    <Stack.Navigator
-      screenOptions={{ headerShown: false }}
-      initialRouteName={isLoggedIn ? 'MainTabs' : 'Login'} // start where you want
-    >
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="MainTabs" component={BottomTabs} />
-      <Stack.Screen name="AddPatient" component={AddPatientScreen} />
-      <Stack.Screen name="MotorTestInstructions" component={MotorTestInstructionsScreen} />
-      <Stack.Screen name="RestTremor" component={RestTremorScreen} />
-      <Stack.Screen name="PosturalTremor" component={PosturalTremorScreen} />
-      <Stack.Screen name="NeuroSenseReport" component={NeuroSenseReportScreen} />
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName={isLoggedIn ? 'MainTabs' : 'Login'} // start where you want
+      >
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="MainTabs" component={BottomTabs} />
+        <Stack.Screen name="AddPatient" component={AddPatientScreen} />
+        <Stack.Screen name="MotorTestInstructions" component={MotorTestInstructionsScreen} />
+        <Stack.Screen name="RestTremor" component={RestTremorScreen} />
+        <Stack.Screen name="PosturalTremor" component={PosturalTremorScreen} />
+        <Stack.Screen name="NeuroSenseReport" component={NeuroSenseReportScreen} />
+        <Stack.Screen name="FingerTapping" component={FingerTappingScreen} />
+        <Stack.Screen name="Score" component={ScoreScreen} />
+        <Stack.Screen name="Replay" component={ReplayScreen} />
 
         <Stack.Screen name="Question1" component={Question1} />
         <Stack.Screen name="Question2" component={Question2} />
@@ -105,7 +114,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Question5" component={Question5} />
         <Stack.Screen name="TestResult" component={TestResult} />
       </Stack.Navigator>
-    
-  </NavigationContainer>
+
+    </NavigationContainer>
   );
 }

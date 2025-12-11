@@ -46,7 +46,7 @@ export default function ScoreScreen() {
 
             <TouchableOpacity
                 style={[styles.doneButton, { backgroundColor: severity.color }]}
-                onPress={() => (navigation as any).navigate('Home')}
+                onPress={() => (navigation as any).navigate('NeuroSenseReport', { patient: (route.params as any).patient })}
             >
                 <Text style={styles.doneText}>Done</Text>
             </TouchableOpacity>

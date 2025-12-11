@@ -13,7 +13,7 @@ import {
 import Video from 'react-native-video';
 import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useNavigation, useIsFocused, useRoute } from '@react-navigation/native';
 import { processVideoAndExtractFeatures } from '../native/videoprocessor';
 import { predictFromFeatureArray, loadModelFromAssets } from '../native/onnxClient';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +22,8 @@ import Svg, { Circle, Line, Text as SvgText } from 'react-native-svg';
 export default function FingerTappingScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const route = useRoute();
+  const { patient } = (route.params as any) || {};
   const safeAreaInsets = useSafeAreaInsets();
   const device = useCameraDevice('front');
 
@@ -167,11 +169,11 @@ export default function FingerTappingScreen() {
       console.log("Prediction result:", result);
 
       if (result) {
-        // Auto-navigate to ScoreScreen for "instant" feedback
         (navigation as any).navigate('Score', {
           score: result.score.toFixed(2),
           videoUri: `file://${path}`,
-          frames: frames
+          frames: frames,
+          patient: patient
         });
       } else {
         throw new Error("Received empty result from model");

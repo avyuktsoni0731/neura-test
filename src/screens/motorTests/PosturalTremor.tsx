@@ -90,7 +90,7 @@ export default function PosturalTremorScreen({ navigation, route }: any) {
       const timestamp = Date.now();
       frequencyReadingsRef.current.push(telemetry.tremor.frequency_hz);
       amplitudeReadingsRef.current.push(telemetry.tremor.amplitude);
-      
+
       timeSeriesDataRef.current.push({
         timestamp,
         frequency: telemetry.tremor.frequency_hz,
@@ -170,13 +170,13 @@ export default function PosturalTremorScreen({ navigation, route }: any) {
     const avgFrequency =
       frequencyReadings.length > 0
         ? frequencyReadings.reduce((sum, val) => sum + val, 0) /
-          frequencyReadings.length
+        frequencyReadings.length
         : 0;
 
     const avgAmplitude =
       amplitudeReadings.length > 0
         ? amplitudeReadings.reduce((sum, val) => sum + val, 0) /
-          amplitudeReadings.length
+        amplitudeReadings.length
         : 0;
 
     const avgStability = timeSeriesData.length > 0
@@ -190,7 +190,7 @@ export default function PosturalTremorScreen({ navigation, route }: any) {
     const detectedCount = timeSeriesData.filter(d => d.detected === true).length;
     const detectionRate = timeSeriesData.length > 0 ? (detectedCount / timeSeriesData.length) * 100 : 0;
     const maxConsecutive = Math.max(...timeSeriesData.map(d => d.consecutive || 0), 0);
-    
+
     // Get most common status
     const statusCounts: { [key: string]: number } = {};
     timeSeriesData.forEach(d => {
@@ -198,7 +198,7 @@ export default function PosturalTremorScreen({ navigation, route }: any) {
         statusCounts[d.status] = (statusCounts[d.status] || 0) + 1;
       }
     });
-    const averageStatus = Object.keys(statusCounts).reduce((a, b) => 
+    const averageStatus = Object.keys(statusCounts).reduce((a, b) =>
       statusCounts[a] > statusCounts[b] ? a : b, Object.keys(statusCounts)[0] || 'Unknown'
     );
 
@@ -216,7 +216,7 @@ export default function PosturalTremorScreen({ navigation, route }: any) {
 
     setAverages(results);
     savePosturalTremorResults(results);
-    
+
     setTimeout(() => {
       setShowCompletion(true);
     }, 500);
@@ -239,7 +239,7 @@ export default function PosturalTremorScreen({ navigation, route }: any) {
               <Text style={styles.checkmark}>✓</Text>
             </View>
           </Animated.View>
-          
+
           <Text style={styles.completionTitle}>Test Complete!</Text>
           <Text style={styles.completionSubtitle}>
             Postural Tremor data recorded successfully
@@ -263,12 +263,12 @@ export default function PosturalTremorScreen({ navigation, route }: any) {
           <TouchableOpacity
             style={styles.continueButton}
             onPress={() => {
-              navigation.navigate('NeuroSenseReport', { patient });
+              navigation.navigate('FingerTapping', { patient });
             }}
           >
-            <Text style={styles.continueButtonText}>View Final Report</Text>
+            <Text style={styles.continueButtonText}>Continue to Finger Tapping Test</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             style={styles.homeButton}
             onPress={() => {
@@ -381,8 +381,8 @@ export default function PosturalTremorScreen({ navigation, route }: any) {
             {isRecording
               ? `Recording... ${timeRemaining}s`
               : averages
-              ? 'Test Complete'
-              : 'Ready'}
+                ? 'Test Complete'
+                : 'Ready'}
           </Text>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerButton}>
             <Text style={styles.stopButtonText}>Stop</Text>
