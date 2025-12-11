@@ -116,7 +116,8 @@
     "spatialMemory": "இடஞ்சார்ந்த நினைவு",
     "correctPositions": "சரியான நிலைகள்",
     "totalScore": "மொத்த மதிப்பெண்",
-    "returnToHome": "வீட்டிற்கு திரும்பு"
+    "returnToHome": "வீட்டிற்கு திரும்பு",
+    "startMotorTest": "மோட்டார் டெஸ்ட் தொடங்கு"
   },
   "newSession": {
     "title": "புதிய அமர்வு",
@@ -132,7 +133,7 @@
     "failedToDelete": "நோயாளியை நீக்க முடியவில்லை"
   },
   "posturalTremor": {
-    "title": "போஸ்ட்சுரல் ட்ரெமர் டெஸ்ட்",
+    "title": "போஸ்சுரல் ட்ரெமர் டெஸ்ட்",
     "back": "பின்",
     "patient": "நோயாளி",
     "setupInstructions": "அமைப்பு வழிமுறைகள்",

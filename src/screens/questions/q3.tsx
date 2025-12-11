@@ -1,20 +1,27 @@
 // src/screens/questions/q3.tsx
-import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../navigation/appNavigator";
-import { useQuizStore } from "../../store/quizStore";
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../navigation/appNavigator';
+import { useQuizStore } from '../../store/quizStore';
 
-type Props = NativeStackScreenProps<RootStackParamList, "Question3">;
+type Props = NativeStackScreenProps<RootStackParamList, 'Question3'>;
 
 const DIGITS = [5, 8, 1, 3]; // clinically accurate backward recall set
 
-export default function Question3({ navigation }: Props) {
+export default function Question3({ navigation, route }: Props) {
   const { t } = useTranslation();
-  const [answer, setAnswer] = useState("");
+  const [answer, setAnswer] = useState('');
   const [showDigits, setShowDigits] = useState(true); // digits visible initially
-  const setQuizAnswer = useQuizStore((s) => s.setAnswer);
+  const setQuizAnswer = useQuizStore(s => s.setAnswer);
+  const { patient } = route.params;
 
   useEffect(() => {
     // hide digits after 3 seconds
@@ -23,8 +30,8 @@ export default function Question3({ navigation }: Props) {
   }, []);
 
   const handleNext = () => {
-    setQuizAnswer("Question3", answer.trim());
-    navigation.navigate("Question4");
+    setQuizAnswer('Question3', answer.trim());
+    navigation.navigate('Question4', { patient });
   };
 
   return (
@@ -35,14 +42,12 @@ export default function Question3({ navigation }: Props) {
 
       <Text style={styles.title}>{t('questions.digitSpanTitle')}</Text>
 
-      <Text style={styles.question}>
-        {t('questions.digitSpanInstruction')}
-      </Text>
+      <Text style={styles.question}>{t('questions.digitSpanInstruction')}</Text>
 
       {/* Digits shown only for 3 seconds */}
       {showDigits ? (
         <View style={styles.digitBox}>
-          <Text style={styles.digits}>{DIGITS.join("   ")}</Text>
+          <Text style={styles.digits}>{DIGITS.join('   ')}</Text>
         </View>
       ) : (
         <>
@@ -68,45 +73,45 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    backgroundColor: "#f0fdf4",
-    justifyContent: "center",
+    backgroundColor: '#f0fdf4',
+    justifyContent: 'center',
   },
   progress: {
-    textAlign: "center",
-    color: "#6b7280",
+    textAlign: 'center',
+    color: '#6b7280',
     marginBottom: 12,
   },
   title: {
     fontSize: 22,
-    fontWeight: "800",
-    textAlign: "center",
+    fontWeight: '800',
+    textAlign: 'center',
     marginBottom: 10,
   },
   question: {
     fontSize: 17,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 16,
-    color: "#374151",
+    color: '#374151',
   },
-  digitBox: { alignItems: "center", marginBottom: 20 },
-  digits: { fontSize: 28, fontWeight: "900", letterSpacing: 8 },
+  digitBox: { alignItems: 'center', marginBottom: 20 },
+  digits: { fontSize: 28, fontWeight: '900', letterSpacing: 8 },
   input: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 14,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: '#e5e7eb',
     marginBottom: 26,
     elevation: 2,
   },
   button: {
-    backgroundColor: "#2563eb",
+    backgroundColor: '#2563eb',
     paddingVertical: 14,
     borderRadius: 12,
-    alignItems: "center",
+    alignItems: 'center',
   },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
 });
 
 // src/screens/questions/q3.tsx

@@ -7,6 +7,8 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  Modal,
+  FlatList,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store/appstore.js';
@@ -21,6 +23,29 @@ export default function AddPatientScreen({ navigation, route }) {
   const [sex, setSex] = useState('');
   const [phone, setPhone] = useState('');
   const [medicalHistory, setMedicalHistory] = useState('');
+  const [bloodGroup, setBloodGroup] = useState('');
+  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [showBloodGroupModal, setShowBloodGroupModal] = useState(false);
+
+  const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
+  const formatDate = text => {
+    const cleaned = text.replace(/\D/g, '');
+    let formatted = cleaned;
+
+    if (cleaned.length > 2 && cleaned.length <= 4) {
+      formatted = `${cleaned.slice(0, 2)}-${cleaned.slice(2)}`;
+    } else if (cleaned.length > 4) {
+      formatted = `${cleaned.slice(0, 2)}-${cleaned.slice(
+        2,
+        4,
+      )}-${cleaned.slice(4, 8)}`;
+    }
+
+    return formatted.slice(0, 10);
+  };
 
   const handleSavePatient = async () => {
     // Validation
@@ -36,6 +61,22 @@ export default function AddPatientScreen({ navigation, route }) {
       Alert.alert(t('common.error'), t('addPatient.validationSex'));
       return;
     }
+    if (!bloodGroup.trim()) {
+      Alert.alert(t('common.error'), 'Please select blood group');
+      return;
+    }
+    if (!weight.trim()) {
+      Alert.alert(t('common.error'), 'Please enter weight');
+      return;
+    }
+    if (!height.trim()) {
+      Alert.alert(t('common.error'), 'Please enter height');
+      return;
+    }
+    if (!dateOfBirth.trim() || dateOfBirth.length !== 10) {
+      Alert.alert(t('common.error'), 'Please enter valid date of birth');
+      return;
+    }
 
     const patient = {
       id: Date.now().toString(),
@@ -44,6 +85,10 @@ export default function AddPatientScreen({ navigation, route }) {
       sex: sex.trim(),
       phone: phone.trim(),
       medicalHistory: medicalHistory.trim(),
+      bloodGroup: bloodGroup.trim(),
+      weight: weight.trim(),
+      height: height.trim(),
+      dateOfBirth: dateOfBirth.trim(),
       practitionerId: practitioner.mobile,
       createdAt: Date.now(),
     };
@@ -103,12 +148,56 @@ export default function AddPatientScreen({ navigation, route }) {
         placeholderTextColor="#999"
       />
 
+      <Text style={styles.label}>Date of Birth *</Text>
+      <TextInput
+        style={styles.input}
+        value={dateOfBirth}
+        onChangeText={text => setDateOfBirth(formatDate(text))}
+        placeholder="DD-MM-YYYY"
+        keyboardType="numeric"
+        maxLength={10}
+        placeholderTextColor="#999"
+      />
+
       <Text style={styles.label}>{t('addPatient.sex')}</Text>
       <View style={styles.sexContainer}>
         <SexButton value="Male" label={t('addPatient.male')} />
         <SexButton value="Female" label={t('addPatient.female')} />
         <SexButton value="Other" label={t('addPatient.other')} />
       </View>
+
+      <Text style={styles.label}>Blood Group *</Text>
+      <TouchableOpacity
+        style={styles.dropdownButton}
+        onPress={() => setShowBloodGroupModal(true)}
+      >
+        <Text
+          style={[styles.dropdownText, !bloodGroup && styles.placeholderText]}
+        >
+          {bloodGroup || 'Select Blood Group'}
+        </Text>
+        <Text style={styles.dropdownArrow}>▼</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.label}>Weight (kg) *</Text>
+      <TextInput
+        style={styles.input}
+        value={weight}
+        onChangeText={setWeight}
+        placeholder="Enter weight in kg"
+        keyboardType="numeric"
+        placeholderTextColor="#999"
+      />
+
+      <Text style={styles.label}>Height (cm) *</Text>
+      <TextInput
+        style={styles.input}
+        value={height}
+        onChangeText={setHeight}
+        placeholder="Enter height in cm"
+        keyboardType="numeric"
+        placeholderTextColor="#999"
+      />
 
       <Text style={styles.label}>{t('addPatient.phone')}</Text>
       <TextInput
@@ -135,6 +224,40 @@ export default function AddPatientScreen({ navigation, route }) {
       <TouchableOpacity style={styles.saveBtn} onPress={handleSavePatient}>
         <Text style={styles.saveBtnText}>{t('addPatient.savePatient')}</Text>
       </TouchableOpacity>
+
+      <Modal
+        visible={showBloodGroupModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowBloodGroupModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Select Blood Group</Text>
+            <FlatList
+              data={bloodGroups}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.bloodGroupItem}
+                  onPress={() => {
+                    setBloodGroup(item);
+                    setShowBloodGroupModal(false);
+                  }}
+                >
+                  <Text style={styles.bloodGroupText}>{item}</Text>
+                </TouchableOpacity>
+              )}
+              keyExtractor={item => item}
+            />
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setShowBloodGroupModal(false)}
+            >
+              <Text style={styles.modalCloseText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -207,5 +330,68 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: '700',
+  },
+  dropdownButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 12,
+    backgroundColor: '#f8f9fa',
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    marginBottom: 10,
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  placeholderText: {
+    color: '#999',
+  },
+  dropdownArrow: {
+    fontSize: 12,
+    color: '#666',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 20,
+    width: '80%',
+    maxHeight: '60%',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  bloodGroupItem: {
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  bloodGroupText: {
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  modalCloseButton: {
+    marginTop: 15,
+    paddingVertical: 12,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+  },
+  modalCloseText: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#666',
   },
 });
