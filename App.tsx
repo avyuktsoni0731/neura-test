@@ -7,13 +7,16 @@
 
 import './app.css';
 import './nativewind-env.d.ts';
-import './src/i18n';
+import './src/i18n'; // Initialize i18n
+
 import { StatusBar, useColorScheme } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {
+  SafeAreaProvider,
+} from 'react-native-safe-area-context';
+
 import React, { useEffect, useState } from 'react';
 import SplashScreen from './components/SplashScreen';
 import AppNavigator from './src/navigation/appNavigator.tsx';
-import { NavigationContainer } from '@react-navigation/native';
 import { loadSavedLanguage } from './src/i18n';
 
 function App() {
