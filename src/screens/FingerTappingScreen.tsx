@@ -18,6 +18,7 @@ import { processVideoAndExtractFeatures } from '../native/videoprocessor';
 import { predictFromFeatureArray, loadModelFromAssets } from '../native/onnxClient';
 import { useTranslation } from 'react-i18next';
 import Svg, { Circle, Line, Text as SvgText } from 'react-native-svg';
+// import { Canvas, Circle, Line, vec, Paint } from '@shopify/react-native-skia';
 
 // MediaPipe Hand Landmark Connections
 const HAND_CONNECTIONS = [
@@ -79,6 +80,7 @@ export default function FingerTappingScreen() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [hasPermission, setHasPermission] = useState(false);
   const isFocused = useIsFocused();
+  const [viewDimensions, setViewDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     // Ensure model is loaded
