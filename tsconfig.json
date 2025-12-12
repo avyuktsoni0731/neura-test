@@ -1,6 +1,7 @@
 {
   "extends": "@react-native/typescript-config",
   "compilerOptions": {
+    "jsx": "react",
     "types": ["node", "nativewind/types"]
   },
   "include": ["**/*.ts", "**/*.tsx", "nativewind-env.d.ts" , "App.tsx", "src/screens/home.tsx"   ],
